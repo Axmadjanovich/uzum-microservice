@@ -57,6 +57,7 @@ public class ProductRepositoryImpl {
 
     }
 
+    //TODO qidiruvga ID va categoryID ustunlarini qo'shish
     private void generateQueryCondition(StringBuilder queryCondition, Map<String, String> params) {
         if (params.containsKey("name")) {
             queryCondition.append(" AND upper(p.name) like :name ");
