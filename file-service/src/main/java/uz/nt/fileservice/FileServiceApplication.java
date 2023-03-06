@@ -1,13 +1,13 @@
-package uz.nt.productservice;
+package uz.nt.fileservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ProductServiceApplication {
+public class FileServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ProductServiceApplication.class, args);
+        SpringApplication.run(FileServiceApplication.class, args);
     }
 
 }
