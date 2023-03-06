@@ -23,6 +23,7 @@
         <module>product-service</module>
         <module>shared-libs</module>
         <module>user-service</module>
+        <module>file-service</module>
     </modules>
     <dependencies>
         <dependency>
