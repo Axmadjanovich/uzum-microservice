@@ -16,7 +16,9 @@ import java.util.List;
 @NamedQuery(query = "select p from Product p where coalesce(:id, id) = id " +
         "and coalesce(:name, name) = name " +
         "and coalesce(:price, price) = price " +
-        "and coalesce(:amount, amount) = amount", name = "findProductById")
+        "and coalesce(:amount, amount) = amount " +
+        "and coalesce(:description, description) = description " +
+        "and coalesce(:categoryId, categoryId) = categoryId ", name = "findProductById")
 public class Product {
     @Id
     @GeneratedValue(generator = "productIdSeq")

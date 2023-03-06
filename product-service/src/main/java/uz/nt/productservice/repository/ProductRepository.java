@@ -22,7 +22,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findProductById(@Param("id") Integer id,
                                   @Param("name") String name,
                                   @Param("amount") Integer amount,
-                                  @Param("price") Integer price);
+                                  @Param("price") Integer price,
+                                  @Param("description") String description,
+                                  @Param("categoryId") Integer categoryId);
 
     List<Product> findAllByAmountLessThanEqual(Integer amount);
 

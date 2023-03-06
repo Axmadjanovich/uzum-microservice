@@ -170,7 +170,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto) {
-        List<Product> products = productRepository.findProductById(productDto.getId(), productDto.getName(), productDto.getAmount(), productDto.getPrice());
+        List<Product> products = productRepository.findProductById(productDto.getId(), productDto.getName(), productDto.getAmount(), productDto.getPrice(), productDto.getDescription(), productDto.getCategoryId());
         if (products.isEmpty()){
             return ResponseDto.<List<ProductDto>>builder()
                     .code(-1)
@@ -192,7 +192,7 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()){
             return ResponseDto.<List<ProductDto>>builder()
                     .code(-1)
-                    .message("MOT FOUND")
+                    .message("NOT FOUND")
                     .build();
         }
 
