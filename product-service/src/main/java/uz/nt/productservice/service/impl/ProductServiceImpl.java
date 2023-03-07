@@ -47,9 +47,14 @@ public class ProductServiceImpl implements ProductService {
                     .build();
         }
 
+        Product product = productMapper.toEntity(productDto);
+
+
+
+        productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
-                .data(productMapper.toDto(productRepository.save(productMapper.toEntity(productDto))))
+                .data(productMapper.toDto(product))
                 .success(true)
                 .message("Ok")
                 .build();
