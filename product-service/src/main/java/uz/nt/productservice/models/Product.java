@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 
 @Entity
 @Getter
@@ -31,6 +30,4 @@ public class Product {
     private Integer categoryId;
     private Boolean isAvailable;
 }
-//1. Product qo'shish
-//2. Bor productni o'zgartirish
-//3. Umumiy productlar ro'yxatini qaytarish
+
