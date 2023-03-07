@@ -23,6 +23,7 @@
         <module>product-service</module>
         <module>shared-libs</module>
         <module>user-service</module>
+        <module>email-service</module>
         <module>file-service</module>
     </modules>
     <dependencies>
@@ -40,6 +41,8 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
+
+
 
         <dependency>
             <groupId>org.projectlombok</groupId>
