@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.models.Product;
@@ -24,7 +25,7 @@ import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepositoryImpl productRepositoryImpl;
