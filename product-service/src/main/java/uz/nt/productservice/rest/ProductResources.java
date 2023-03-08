@@ -21,7 +21,7 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseDto<ProductDto> addNewProduct(@RequestBody ProductDto productDto) {
+    public ResponseDto<ProductDto> addNewProduct(@ModelAttribute ProductDto productDto) {
         return productService.addNewProduct(productDto);
     }
 
