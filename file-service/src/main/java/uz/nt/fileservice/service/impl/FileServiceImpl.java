@@ -9,17 +9,15 @@ import uz.nt.fileservice.model.File;
 import uz.nt.fileservice.repository.FileRepository;
 import uz.nt.fileservice.service.Fileservices;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 import java.util.UUID;
-
-import static validator.AppStatusCodes.*;
-import static validator.AppStatusMessages.*;
 
 @Service
 @Slf4j
@@ -27,7 +25,6 @@ import static validator.AppStatusMessages.*;
 public class FileServiceImpl implements Fileservices {
 
     private final FileRepository fileRepository;
-
     @Override
     public ResponseDto<Integer> fileUpload(MultipartFile file) {
         File fileEntity = new File();
@@ -36,7 +33,7 @@ public class FileServiceImpl implements Fileservices {
 
         try {
             String filePath;
-            Files.copy(file.getInputStream(), Path.of(filePath = filePath("upload", fileEntity.getExt())));
+            Files.copy(file.getInputStream(), Path.of(filePath = filePath("upload",fileEntity.getExt())));
             fileEntity.setPath(filePath);
             File savedFile = fileRepository.save(fileEntity);
 
@@ -53,43 +50,14 @@ public class FileServiceImpl implements Fileservices {
                     .build();
         }
     }
-
-    @Override
-    public ResponseDto<java.io.File> getFileById(Integer id) {
-        if (id == null) {
-            return ResponseDto.<java.io.File>builder()
-                    .message(NULL_VALUE)
-                    .code(VALIDATION_ERROR_CODE)
-                    .build();
-        }
-
-        Optional<File> optional = fileRepository.findById(id);
-
-        if (optional.isEmpty()){
-            return ResponseDto.<java.io.File>builder()
-                    .message(NOT_FOUND)
-                    .code(NOT_FOUND_ERROR_CODE)
-                    .build();
-        }
-
-        java.io.File file = new java.io.File(optional.get().getPath());
-
-        return ResponseDto.<java.io.File>builder()
-                .data(file)
-                .message(OK)
-                .code(OK_CODE)
-                .success(true)
-                .build();
-    }
-
-    public static String filePath(String folder, String ext) {
+    public static String filePath(String folder,String ext){
         LocalDate localDate = LocalDate.now();
         String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        java.io.File file = new java.io.File(folder + "/" + path);
-        if (!file.exists()) {
+        java.io.File file = new java.io.File(folder + "/"+ path);
+        if (!file.exists()){
             file.mkdirs();
         }
         String uuid = UUID.randomUUID().toString();
-        return file.getPath() + "\\" + uuid + ext;
+        return file.getPath() + "\\"+ uuid + ext;
     }
 }
