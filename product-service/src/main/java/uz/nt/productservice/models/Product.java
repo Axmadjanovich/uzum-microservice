@@ -30,6 +30,7 @@ public class Product {
     private String description;
     private Integer categoryId;
     private Boolean isAvailable;
+    private Integer fileId;
 }
 //1. Product qo'shish
 //2. Bor productni o'zgartirish
