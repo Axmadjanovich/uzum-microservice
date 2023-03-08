@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -16,6 +17,6 @@ public class ProductDto {
     private Integer amount;
     private String description;
     private Integer categoryId;
-    private String imageUrl;
+    private MultipartFile image;
     private Boolean isAvailable;
 }
