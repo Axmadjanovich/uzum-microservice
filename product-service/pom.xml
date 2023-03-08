@@ -16,7 +16,25 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+<!--        Feign -->
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+            <version>12.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-httpclient</artifactId>
+            <version>12.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
