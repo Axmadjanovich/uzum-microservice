@@ -6,6 +6,6 @@ import uz.nt.fileservice.dto.FileDto;
 
 public interface Fileservices {
 
-    ResponseDto<String> fileUpload(MultipartFile file);
+    ResponseDto<Integer> fileUpload(MultipartFile file);
 
 }

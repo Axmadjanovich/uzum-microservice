@@ -13,6 +13,5 @@ public abstract class ProductMapper {
     public abstract ProductDto toDto(Product product);
 
     @Mapping(target = "isAvailable", expression = "java( productDto.getAmount() != null && productDto.getAmount() > 0)")
-
     public abstract Product toEntity(ProductDto productDto);
 }

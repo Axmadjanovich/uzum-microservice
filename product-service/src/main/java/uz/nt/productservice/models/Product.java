@@ -26,6 +26,7 @@ public class Product {
     private Integer price;
     private Integer amount;
     private String description;
+    private Integer fileId;
     private Integer categoryId;
     private Boolean isAvailable;
 }
