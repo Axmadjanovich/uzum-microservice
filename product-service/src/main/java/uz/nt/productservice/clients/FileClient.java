@@ -12,6 +12,7 @@ import uz.nt.productservice.config.FeignClientConfig;
         url = "http://localhost:8001/file-service",
         configuration = FeignClientConfig.class)
 public interface FileClient {
+
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file);
 }
