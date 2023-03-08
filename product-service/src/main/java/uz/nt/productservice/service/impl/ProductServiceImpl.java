@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
+import uz.nt.productservice.clients.FileClient;
 import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.models.Product;
 import uz.nt.productservice.repository.ProductRepository;
@@ -23,11 +24,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static validator.AppStatusCodes.UNEXPECTED_ERROR_CODE;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepositoryImpl productRepositoryImpl;
+    private final FileClient fileClient;
 
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
@@ -46,10 +49,20 @@ public class ProductServiceImpl implements ProductService {
                     .success(false)
                     .build();
         }
+        Product product = productMapper.toEntity(productDto);
 
+        ResponseDto<Integer> imageResponseDto = fileClient.uploadFile(productDto.getImage());
+        if(!imageResponseDto.isSuccess()){
+            return ResponseDto.<ProductDto>builder()
+                    .message(imageResponseDto.getMessage())
+                    .code(UNEXPECTED_ERROR_CODE)
+                    .build();
+        }
+        product.setFileId(imageResponseDto.getData());
+        productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
-                .data(productMapper.toDto(productRepository.save(productMapper.toEntity(productDto))))
+                .data(productMapper.toDto(product))
                 .success(true)
                 .message("Ok")
                 .build();
