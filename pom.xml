@@ -25,6 +25,7 @@
         <module>user-service</module>
         <module>email-service</module>
         <module>file-service</module>
+        <module>cloud-server</module>
     </modules>
     <dependencies>
         <dependency>

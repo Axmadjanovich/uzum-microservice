@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import uz.nt.productservice.clients.FileClient;
 import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.models.Product;
 import uz.nt.productservice.repository.ProductRepository;
@@ -29,9 +29,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepositoryImpl productRepositoryImpl;
-
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final FileClient fileClient;
 
     @Override
     public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) {
@@ -51,7 +51,18 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.toEntity(productDto);
 
 
+        ResponseDto<Integer> imageResponse = fileClient.uploadFile(productDto.getImage());
+        if(!imageResponse.isSuccess()){
+            return ResponseDto.<ProductDto>builder()
+                    .errors(errors)
+                    .code(-2)
+                    .success(false)
+                    .message("VALIDATION_ERROR")
+                    .data(productDto)
+                    .build();
+        }
 
+        product.setFileId(imageResponse.getData());
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()

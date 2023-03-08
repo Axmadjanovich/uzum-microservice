@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.service.ProductService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -20,8 +21,8 @@ public class ProductResources {
 
     private final ProductService productService;
 
-    @PostMapping
-    public ResponseDto<ProductDto> addNewProduct(@RequestBody ProductDto productDto) {
+    @PostMapping(consumes = {"multipart/form-data", "application/json"})
+    public ResponseDto<ProductDto> addNewProduct(@ModelAttribute ProductDto productDto) throws IOException {
         return productService.addNewProduct(productDto);
     }
 
