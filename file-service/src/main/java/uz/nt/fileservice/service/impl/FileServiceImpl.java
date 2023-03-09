@@ -8,15 +8,15 @@ import org.springframework.web.multipart.MultipartFile;
 import uz.nt.fileservice.model.File;
 import uz.nt.fileservice.repository.FileRepository;
 import uz.nt.fileservice.service.Fileservices;
+import uz.nt.productservice.dto.ProductDto;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,6 +25,8 @@ import java.util.UUID;
 public class FileServiceImpl implements Fileservices {
 
     private final FileRepository fileRepository;
+
+    private final ExcelWriter excelWriter;
     @Override
     public ResponseDto<Integer> fileUpload(MultipartFile file) {
         File fileEntity = new File();
@@ -33,7 +35,7 @@ public class FileServiceImpl implements Fileservices {
 
         try {
             String filePath;
-            Files.copy(file.getInputStream(), Path.of(filePath = filePath("upload",fileEntity.getExt())));
+            Files.copy(file.getInputStream(), Path.of(filePath = filePath("images",fileEntity.getExt())));
             fileEntity.setPath(filePath);
             File savedFile = fileRepository.save(fileEntity);
 
@@ -50,14 +52,26 @@ public class FileServiceImpl implements Fileservices {
                     .build();
         }
     }
+
     public static String filePath(String folder,String ext){
         LocalDate localDate = LocalDate.now();
         String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        java.io.File file = new java.io.File(folder + "/"+ path);
+        java.io.File file = new java.io.File("upload/"+ folder + "/"+ path);
         if (!file.exists()){
             file.mkdirs();
         }
         String uuid = UUID.randomUUID().toString();
         return file.getPath() + "\\"+ uuid + ext;
+    }
+
+    @Override
+    public void reportProducts(List<ProductDto> productDtoList) throws IOException {
+
+        FileOutputStream outputStream = new FileOutputStream(filePath("report", ".xlsx"));
+        excelWriter.writeHeaderLine();
+        excelWriter.writeDataLines(productDtoList);
+        excelWriter.workbook.write(outputStream);
+        excelWriter.workbook.close();
+
     }
 }

@@ -6,6 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.nt.fileservice.service.Fileservices;
+import uz.nt.productservice.dto.ProductDto;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("file")
@@ -22,6 +26,11 @@ public class FileResources {
     @PostMapping
     public ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file){
         return fileservices.fileUpload(file);
+    }
+
+    @PostMapping("report")
+    public ResponseDto<Void> reportProducts(@RequestBody List<ProductDto> productDtoList) throws IOException {
+        return fileservices.reportProducts(productDtoList);
     }
 
 }
