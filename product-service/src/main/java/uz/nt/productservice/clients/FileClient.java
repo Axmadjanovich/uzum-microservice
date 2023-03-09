@@ -22,5 +22,6 @@ public interface FileClient {
     ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file);
 
     @PostMapping(value = "/file/report")
+//    file is ready
     ResponseDto<Integer> sendProductsWithLessAmount(@RequestBody List<ProductDto> productList);
 }
