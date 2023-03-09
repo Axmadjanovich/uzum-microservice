@@ -4,6 +4,7 @@ import dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
@@ -13,15 +14,13 @@ import uz.nt.userservice.client.ProductClient;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.service.impl.UsersServiceImpl;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UsersResources {
     private final UsersServiceImpl usersService;
     private final ProductClient productClient;
-
+    //TODO AppMonsters: ValidationError uchun ExceptionHandler yozish
     @Operation(
             method = "Add new User",
             description = "Need to send UsersDto to this endpoint to create new user",
@@ -30,7 +29,7 @@ public class UsersResources {
                     @ApiResponse(responseCode = "403", description = "Authorization error")}
     )
     @PostMapping()
-    public ResponseDto<UsersDto> addUser(@RequestBody UsersDto usersDto) {
+    public ResponseDto<UsersDto> addUser(@RequestBody @Valid UsersDto usersDto) {
         return usersService.addUser(usersDto);
     }
 
@@ -49,8 +48,8 @@ public class UsersResources {
         return usersService.getById(id);
     }
 
-    @GetMapping("/product")
-    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(){
-        return productClient.getProducts(10,0);
+    @GetMapping("/products")
+    public ResponseDto<Page<EntityModel<ProductDto>>> getProductList(){
+        return productClient.getProducts(10, 0);
     }
 }
