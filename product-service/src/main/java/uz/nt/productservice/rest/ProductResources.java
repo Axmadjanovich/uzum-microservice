@@ -3,6 +3,7 @@ package uz.nt.productservice.rest;
 import dto.ResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class ProductResources {
 
     private final ProductService productService;
+    private final Environment environment;
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseDto<ProductDto> addNewProduct(@ModelAttribute ProductDto productDto) {
@@ -33,7 +35,11 @@ public class ProductResources {
     @GetMapping()
     public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(@RequestParam(defaultValue = "10") Integer size,
                                                                      @RequestParam(defaultValue = "0") Integer page) {
-        return productService.getAllProducts(page, size);
+
+        ResponseDto<Page<EntityModel<ProductDto>>> responseDto = productService.getAllProducts(page, size);
+        responseDto.setMessage(environment.getProperty("server.port") + " " + responseDto.getMessage());
+
+        return responseDto;
     }
 
     @GetMapping("by-id")
