@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
+import uz.nt.productservice.client.FeignClient;
 import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.models.Product;
 import uz.nt.productservice.repository.ProductRepository;
@@ -17,12 +18,16 @@ import uz.nt.productservice.rest.ProductResources;
 import uz.nt.productservice.service.ProductService;
 import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.validator.ValidationService;
+import validator.AppStatusCodes;
+import validator.AppStatusMessages;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static validator.AppStatusCodes.*;
+import static validator.AppStatusMessages.UNEXPECTED_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +36,8 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+
+    private final FeignClient feignClient;
 
     @Override
     public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) {
@@ -46,10 +53,23 @@ public class ProductServiceImpl implements ProductService {
                     .success(false)
                     .build();
         }
+        Product product = productMapper.toEntity(productDto);
+
+        ResponseDto<Integer> responseDto = feignClient.uploadFile(productDto.getImage());
+
+        if (!responseDto.isSuccess()){
+            return ResponseDto.<ProductDto>builder()
+                    .message(UNEXPECTED_ERROR)
+                    .code(UNEXPECTED_ERROR_CODE)
+                    .build();
+        }
+
+        product.setFileId(responseDto.getData());
+        productRepository.save(product);
 
 
         return ResponseDto.<ProductDto>builder()
-                .data(productMapper.toDto(productRepository.save(productMapper.toEntity(productDto))))
+                .data(productMapper.toDto(product))
                 .success(true)
                 .message("Ok")
                 .build();

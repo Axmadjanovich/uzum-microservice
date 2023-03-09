@@ -9,6 +9,8 @@ import uz.nt.fileservice.model.File;
 import uz.nt.fileservice.repository.FileRepository;
 import uz.nt.fileservice.service.Fileservices;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,9 +57,9 @@ public class FileServiceImpl implements Fileservices {
     }
 
     @Override
-    public ResponseDto<java.io.File> getFileById(Integer id) {
+    public ResponseDto<byte[]> getFileById(Integer id) throws IOException {
         if (id == null) {
-            return ResponseDto.<java.io.File>builder()
+            return ResponseDto.<byte[]>builder()
                     .message(NULL_VALUE)
                     .code(VALIDATION_ERROR_CODE)
                     .build();
@@ -66,16 +68,18 @@ public class FileServiceImpl implements Fileservices {
         Optional<File> optional = fileRepository.findById(id);
 
         if (optional.isEmpty()){
-            return ResponseDto.<java.io.File>builder()
+            return ResponseDto.<byte[]>builder()
                     .message(NOT_FOUND)
                     .code(NOT_FOUND_ERROR_CODE)
                     .build();
         }
 
-        java.io.File file = new java.io.File(optional.get().getPath());
+        FileInputStream inputStream = new FileInputStream(optional.get().getPath());
 
-        return ResponseDto.<java.io.File>builder()
-                .data(file)
+        byte[] image = inputStream.readAllBytes();
+
+        return ResponseDto.<byte[]>builder()
+                .data(image)
                 .message(OK)
                 .code(OK_CODE)
                 .success(true)
