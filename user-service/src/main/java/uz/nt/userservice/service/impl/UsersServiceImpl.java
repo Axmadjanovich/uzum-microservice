@@ -25,7 +25,7 @@ public class UsersServiceImpl implements UsersService {
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Users users = userMapper.toEntity(dto);
         usersRepository.save(users);
-
+        //TODO AppMonsters: User emailiga xabar yuborish.
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
