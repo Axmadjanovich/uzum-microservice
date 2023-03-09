@@ -5,12 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import uz.nt.productservice.dto.ProductDto;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 public interface ProductService {
 
-    ResponseDto<ProductDto> addNewProduct(ProductDto productDto);
+    ResponseDto<ProductDto> addNewProduct(ProductDto productDto) throws IOException;
 
     ResponseDto<ProductDto> updateProduct(ProductDto productDto);
 

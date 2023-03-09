@@ -20,6 +20,7 @@ import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.validator.ValidationService;
 import validator.AppStatusCodes;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) {
+    public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) throws IOException {
 
         List<ErrorDto> errors = ValidationService.validation(productDto);
 
@@ -52,7 +53,8 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.toEntity(productDto);
 
         ResponseDto<Integer> imageResponse = fileClient.uploadFile(productDto.getImage());
-        if (!imageResponse.isSuccess()) {
+
+        if (!imageResponse.isSuccess()){
             return ResponseDto.<ProductDto>builder()
                     .message(imageResponse.getMessage())
                     .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)

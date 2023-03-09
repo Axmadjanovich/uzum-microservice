@@ -1,5 +1,6 @@
 package uz.nt.fileservice.rest;
 
+import dto.FileDto;
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

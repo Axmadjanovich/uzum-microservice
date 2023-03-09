@@ -17,13 +17,13 @@ public class FeignClientConfig {
     private ObjectFactory<HttpMessageConverters> objectFactory;
 
     @Bean
-    public Encoder formDataEncoder() {
+    public Encoder formDataEncoder(){
         return new SpringFormEncoder(
                 new SpringEncoder(objectFactory));
     }
 
     @Bean
-    Logger.Level feignLoggerLevel() {
+    public Logger.Level feignLoggerLevel() {
         return Logger.Level.FULL;
     }
 

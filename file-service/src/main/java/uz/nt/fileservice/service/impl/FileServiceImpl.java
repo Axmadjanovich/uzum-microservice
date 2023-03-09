@@ -8,6 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 import uz.nt.fileservice.model.File;
 import uz.nt.fileservice.repository.FileRepository;
 import uz.nt.fileservice.service.Fileservices;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,6 +58,6 @@ public class FileServiceImpl implements Fileservices {
             file.mkdirs();
         }
         String uuid = UUID.randomUUID().toString();
-        return file.getPath() + "\\"+ uuid + ext;
+        return file.getPath() + "/"+ uuid + ext;
     }
 }
