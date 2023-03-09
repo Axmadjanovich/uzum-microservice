@@ -3,6 +3,7 @@ package uz.nt.fileservice.rest;
 import dto.FileDto;
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.nt.fileservice.service.Fileservices;
@@ -29,8 +30,8 @@ public class FileResources {
     }
 
     @PostMapping("report")
-    public ResponseDto<Void> reportProducts(@RequestBody List<ProductDto> productDtoList) throws IOException {
-        return fileservices.reportProducts(productDtoList);
+    public void reportProducts(@RequestBody List<ProductDto> productDtoList) throws IOException {
+        fileservices.reportProducts(productDtoList);
     }
 
 }

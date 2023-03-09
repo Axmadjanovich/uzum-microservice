@@ -18,10 +18,12 @@ public class ScheduleJob {
     private final FileClient fileClient;
 
     private final ProductMapper productMapper;
-    @Scheduled(cron = "00 00 * * *")
+//    @Scheduled(cron = "00 00 * * *")
+    @Scheduled(fixedRate = 1000)
     private void getLessProducts(){
 
-        List<ProductDto> productDtoList = productRepository.getAllByAmountLessThanEqual(10).stream().map(productMapper::toDto).toList();
+        List<ProductDto> productDtoList = productRepository.getAllByAmountLessThanEqual(200).stream().map(productMapper::toDto).toList();
+
         fileClient.sendProductsWithLessAmount(productDtoList);
     }
 
