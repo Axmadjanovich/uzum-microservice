@@ -6,12 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-import uz.nt.productservice.config.FeignClientConfig;
 
 
-@FeignClient(name = "file-service",
-        url = "http://localhost:9002/file-service",
-        configuration = FeignClientConfig.class)
+@FeignClient("product-service")
 public interface FileClient {
 
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

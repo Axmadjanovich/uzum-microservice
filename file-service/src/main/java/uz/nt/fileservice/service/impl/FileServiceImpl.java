@@ -58,6 +58,6 @@ public class FileServiceImpl implements Fileservices {
             file.mkdirs();
         }
         String uuid = UUID.randomUUID().toString();
-        return file.getPath() + "/"+ uuid + ext;
+        return file.getPath() + "\\"+ uuid + ext;
     }
 }
