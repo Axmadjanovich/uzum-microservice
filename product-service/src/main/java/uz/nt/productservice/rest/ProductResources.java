@@ -19,8 +19,8 @@ public class ProductResources {
 
     private final ProductService productService;
 
-    @PostMapping
-    public ResponseDto<ProductDto> addNewProduct(@RequestBody ProductDto productDto) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseDto<ProductDto> addNewProduct(@ModelAttribute ProductDto productDto) {
         return productService.addNewProduct(productDto);
     }
 
