@@ -1,10 +1,10 @@
-package uz.nt.cloudserver;
+package uz.nt.configserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CloudServerApplicationTests {
+class ConfigServerApplicationTests {
 
     @Test
     void contextLoads() {

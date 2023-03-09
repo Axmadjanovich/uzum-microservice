@@ -3,6 +3,8 @@ package uz.nt.productservice.rest;
 import dto.ResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +19,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("product")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductResources {
 
     private final ProductService productService;
+    private final Environment environment;
 
     @PostMapping(consumes = {"multipart/form-data", "application/json"})
     public ResponseDto<ProductDto> addNewProduct(@ModelAttribute ProductDto productDto) throws IOException {
@@ -35,7 +39,9 @@ public class ProductResources {
     @GetMapping()
     public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(@RequestParam(defaultValue = "10") Integer size,
                                                                      @RequestParam(defaultValue = "0") Integer page) {
-        return productService.getAllProducts(page, size);
+        ResponseDto<Page<EntityModel<ProductDto>>> allProducts = productService.getAllProducts(page, size);
+        allProducts.setMessage("Message from " + environment.getProperty("server.port") + " " + allProducts.getMessage());
+        return allProducts;
     }
 
     @GetMapping("by-id")

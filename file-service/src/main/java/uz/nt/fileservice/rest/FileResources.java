@@ -1,5 +1,6 @@
 package uz.nt.fileservice.rest;
 
+import dto.FileDto;
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ public class FileResources {
     private final Fileservices fileservices;
 
     @PostMapping
-    public ResponseDto<Integer> uploadFile(@RequestPart MultipartFile file){
+    public ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file){
         return fileservices.fileUpload(file);
     }
 
