@@ -5,8 +5,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
+import uz.nt.productservice.dto.ProductDto;
+import uz.nt.userservice.client.ProductClient;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.service.impl.UsersServiceImpl;
 
@@ -15,6 +18,7 @@ import uz.nt.userservice.service.impl.UsersServiceImpl;
 @RequiredArgsConstructor
 public class UsersResources {
     private final UsersServiceImpl usersService;
+    private final ProductClient productClient;
 
     @Operation(
             method = "Add new User",
@@ -41,5 +45,10 @@ public class UsersResources {
     @GetMapping("/{id}")
     public ResponseDto<UsersDto> getUserById(@PathVariable Integer id){
         return usersService.getById(id);
+    }
+
+    @GetMapping("/products")
+    public ResponseDto<Page<EntityModel<ProductDto>>> getProductList(){
+        return productClient.getProducts(10, 0);
     }
 }
