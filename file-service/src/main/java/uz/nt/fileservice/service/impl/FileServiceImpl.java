@@ -50,6 +50,12 @@ public class FileServiceImpl implements Fileservices {
                     .build();
         }
     }
+
+    @Override
+    public ResponseDto<java.io.File> getFileById(Integer id) {
+        return null;
+    }
+
     public static String filePath(String folder,String ext){
         LocalDate localDate = LocalDate.now();
         String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));

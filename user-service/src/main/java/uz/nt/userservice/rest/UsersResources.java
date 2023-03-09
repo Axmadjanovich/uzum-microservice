@@ -16,6 +16,7 @@ import uz.nt.userservice.service.impl.UsersServiceImpl;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+
 public class UsersResources {
     private final UsersServiceImpl usersService;
     private final ProductClient productClient;

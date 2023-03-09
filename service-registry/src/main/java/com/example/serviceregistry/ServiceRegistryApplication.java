@@ -1,20 +1,17 @@
-package uz.nt.productservice;
+package com.example.serviceregistry;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-
-import java.util.Arrays;
 
 @SpringBootApplication
-@EnableFeignClients
-@EnableDiscoveryClient
-public class ProductServiceApplication {
+@EnableEurekaServer
+public class
+ServiceRegistryApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ProductServiceApplication.class, args);
+        SpringApplication.run(ServiceRegistryApplication.class, args);
     }
 
 }
