@@ -9,7 +9,7 @@ import uz.nt.userservice.model.Users;
 @Mapper(componentModel = "spring")
 public abstract class UsersMapper implements CommonMapper<UsersDto, Users>{
     @Mapping(target = "birthDate", dateFormat = "dd.MM.yyyy")
-    @Mapping(target = "enabled", expression = "java(true)")
+    @Mapping(target = "enabled", expression = "java(false)")
     @Mapping(target = "role", ignore = true)
     public abstract Users toEntity(UsersDto dto);
 
