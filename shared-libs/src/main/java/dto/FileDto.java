@@ -1,4 +1,4 @@
-package uz.nt.fileservice.dto;
+package dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,8 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileDto {
-
-    private Integer id;
     private MultipartFile file;
-    private String filePath;
+    private String name;
 }
