@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
+import uz.nt.userservice.client.EmailClient;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.model.Users;
 import uz.nt.userservice.repository.UsersRepository;
@@ -14,24 +15,34 @@ import validator.AppStatusCodes;
 import validator.AppStatusMessages;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
     private final UsersMapper userMapper;
+    private final EmailClient emailClient;
 
     @Override
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Users users = userMapper.toEntity(dto);
-        usersRepository.save(users);
+        ResponseDto<Boolean> booleanResponseDto = emailClient.sendEmail(dto.getEmail(), generateCode());
+        if(booleanResponseDto.isSuccess()){
 
-
+            return ResponseDto.<UsersDto>builder()
+                    .success(true)
+                    .data(userMapper.toDto(users))
+                    .message("EMAIL KETTI")
+                    .build();
+        }
+        //usersRepository.save(users);
         return ResponseDto.<UsersDto>builder()
                 .success(true)
                 .data(userMapper.toDto(users))
-                .message("OK")
+                .message("EMAIL JO`NATILMADI")
                 .build();
+
     }
 
     @Override
@@ -122,5 +133,10 @@ public class UsersServiceImpl implements UsersService {
                         .code(AppStatusCodes.NOT_FOUND_ERROR_CODE)
                         .build());
 
+    }
+    private static String generateCode() {
+        Random random = new Random();
+        int code = 100000 + random.nextInt(900000);
+        return String.valueOf(code);
     }
 }

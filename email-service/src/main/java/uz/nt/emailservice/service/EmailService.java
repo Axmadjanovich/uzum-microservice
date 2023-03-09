@@ -13,10 +13,10 @@ public class EmailService {
     public ResponseDto<Boolean> sendEmail(String toEmail, String message){
         try {
             SimpleMailMessage email = new SimpleMailMessage();
-            email.setFrom("JavaN4");
+            email.setFrom("Uzum");
             email.setTo(toEmail);
-            email.setSubject("Java N4");
-            email.setText(message);
+            email.setSubject("Uzum verification");
+            email.setText("Your verification code is: "+message);
 
             mailSender.send(email);
 
