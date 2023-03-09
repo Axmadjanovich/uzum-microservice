@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
+import uz.nt.productservice.clients.FileClient;
 import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.models.Product;
 import uz.nt.productservice.repository.ProductRepository;
@@ -17,7 +18,9 @@ import uz.nt.productservice.rest.ProductResources;
 import uz.nt.productservice.service.ProductService;
 import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.validator.ValidationService;
+import validator.AppStatusCodes;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,9 +37,10 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final FileClient fileClient;
 
     @Override
-    public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) {
+    public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) throws IOException {
 
         List<ErrorDto> errors = ValidationService.validation(productDto);
 
@@ -52,8 +56,15 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = productMapper.toEntity(productDto);
 
+        ResponseDto<Integer> imageResponse = fileClient.uploadFile(productDto.getImage());
+        if (!imageResponse.isSuccess()){
+            return ResponseDto.<ProductDto>builder()
+                    .message(imageResponse.getMessage())
+                    .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)
+                    .build();
+        }
 
-
+        product.setFileId(imageResponse.getData());
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
