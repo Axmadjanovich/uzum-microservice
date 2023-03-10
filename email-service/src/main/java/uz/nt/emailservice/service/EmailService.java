@@ -270,6 +270,7 @@ public class EmailService {
 
     public ResponseDto<Boolean> sendEmailAboutSalesProduct(String email){
         List<SalesDto> products = salesClient.getSalesProductExp().getData();
+        System.out.println(products);
         try {
             MimeMessage sendMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(sendMessage, true);
@@ -280,9 +281,9 @@ public class EmailService {
             for(SalesDto pr: products){
 //                ByteArrayResource img = new ByteArrayResource(fileClient.getFileBytes(pr.getProduct_id()).getData());
 //                helper.addAttachment("image.jpg", img);
-                helper.setText("<h2>"+productClient.getProductBtId(pr.getProduct_id()).getData().getName()+"</h2>"+
+                helper.setText("<h2>"+pr.getPrice()+"</h2>"+
                         "<h3>Eski narx</h3"+
-                        "<h3>"+productClient.getProductBtId(pr.getProduct_id()).getData().getPrice()+"</h3>"+
+                        "<h3>"+pr.getPrice()+"</h3>"+
                         "<h3>chegirmadagi narxi</h3"+
                                 "<h3>"+pr.getPrice()+"</h3"
                 );

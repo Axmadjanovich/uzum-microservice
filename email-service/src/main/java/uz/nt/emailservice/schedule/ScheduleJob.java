@@ -23,8 +23,7 @@ public class ScheduleJob {
     @Transactional
     @Scheduled(cron = "0 2 * * * *")
     public void sendEmailSaleProduct(){
-        List<UsersDto> users = userClient.getEmail().getData();
-        if(!users.isEmpty())
-            users.stream().map(u-> emailService.sendEmailAboutSalesProduct(u.getEmail()));
+        UsersDto users = userClient.getEmail(60).getData();
+        emailService.sendEmailAboutSalesProduct(users.getEmail());
     }
 }
