@@ -1,16 +1,13 @@
 package uz.nt.fileservice.rest;
 
-import dto.FileDto;
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.nt.fileservice.service.Fileservices;
-import uz.nt.productservice.dto.ProductDto;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("file")
@@ -24,14 +21,20 @@ public class FileResources {
     // tashlab boriladi
 
     //TODO rasmni 3 xil kattalikda saqlash
-    @PostMapping
-    public ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file){
-        return fileservices.fileUpload(file);
+//    @PostMapping
+//    public ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file){
+//        return fileservices.fileUpload(file);
+//    }
+
+    @GetMapping
+    public ResponseDto<byte[]> getFileById(@RequestParam Integer fileId) throws IOException {
+        return fileservices.getFileById(fileId);
     }
 
-    @PostMapping("report")
-    public void reportProducts(@RequestBody List<ProductDto> productDtoList) throws IOException {
-        fileservices.reportProducts(productDtoList);
+
+    @PostMapping()
+    public ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file){
+        return fileservices.fileUpload2(file);
     }
 
 }

@@ -23,7 +23,7 @@ public class ScheduleJob {
 
     private final ProductClient productClient;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void report() throws IOException {
         ResponseDto<List<ProductDto>> products = productClient.getProductsForReport();
         fileService.reportProducts(products.getData());
