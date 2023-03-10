@@ -67,10 +67,12 @@ public class FileServiceImpl implements Fileservices {
     @Override
     public void reportProducts(List<ProductDto> productDtoList) throws IOException {
 
-        FileOutputStream outputStream = new FileOutputStream(filePath("report", ".xlsx"));
+        FileOutputStream outputStream = new FileOutputStream(filePath("product-report", ".xlsx"));
         excelWriter.writeHeaderLine();
         excelWriter.writeDataLines(productDtoList);
         excelWriter.workbook.write(outputStream);
+        outputStream.flush();
+        outputStream.close();
         excelWriter.workbook.close();
 
     }
