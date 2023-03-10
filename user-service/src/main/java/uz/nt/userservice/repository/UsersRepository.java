@@ -15,7 +15,6 @@ import java.util.Optional;
 public interface UsersRepository extends JpaRepository<Users, Integer> {
     Optional<Users> findFirstByPhoneNumber(String phoneNumber);
     Optional<Users> findFirstByEmail(String email);
-//    @Query(name = "setEnabledTrue")
     @Modifying
     @Transactional
     @Query(value = "update users set enabled = true where email = :email", nativeQuery = true)
