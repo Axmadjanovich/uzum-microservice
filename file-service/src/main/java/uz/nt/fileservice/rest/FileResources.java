@@ -20,21 +20,17 @@ public class FileResources {
     // uploads papkani ichida yangi product-reports papka ochib, shuni ichiga har kunlik Excel fayllar kun bo'yicha nomlanib
     // tashlab boriladi
 
+
     //TODO rasmni 3 xil kattalikda saqlash
-//    @PostMapping
-//    public ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file){
-//        return fileservices.fileUpload(file);
-//    }
-
-    @GetMapping
-    public ResponseDto<byte[]> getFileById(@RequestParam Integer fileId) throws IOException {
-        return fileservices.getFileById(fileId);
-    }
-
-
     @PostMapping()
     public ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file){
-        return fileservices.fileUpload2(file);
+        return fileservices.fileUpload(file);
     }
+
+    @GetMapping
+    public ResponseDto<byte[]> getFileById(@RequestParam Integer fileId,@RequestParam String size) throws IOException {
+        return fileservices.getFileById(fileId, size);
+    }
+
 
 }

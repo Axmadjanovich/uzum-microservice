@@ -14,7 +14,5 @@ public interface Fileservices {
 
     void reportProducts(List<ProductDto> productDtoList) throws IOException;
 
-    ResponseDto<Integer> fileUpload2(MultipartFile file);
-
-    ResponseDto<byte[]> getFileById(Integer fileId) throws IOException;
+    ResponseDto<byte[]> getFileById(Integer fileId, String size) throws IOException;
 }
