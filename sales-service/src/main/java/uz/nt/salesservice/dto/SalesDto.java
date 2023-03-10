@@ -23,5 +23,5 @@ public class SalesDto {
     private Integer price;
 
     @NotNull
-    private Date expressionDate;
+    private Date expirationDate;
 }

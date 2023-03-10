@@ -1,6 +1,7 @@
 package uz.nt.salesservice.rest;
 
 import dto.ResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,9 @@ public class SalesResources {
 
     private final SalesService salesService;
 
+    @Operation(method = "Add new Sales",
+                description = "Enter SalesDto here to create a new sales",
+                summary = "You can create new sales in this method")
     @PostMapping
     public ResponseDto<SalesDto> addSales(@Valid @RequestBody SalesDto salesDto){
         return salesService.addSales(salesDto);
@@ -25,11 +29,11 @@ public class SalesResources {
     public ResponseDto<SalesDto> update(@RequestBody SalesDto salesDto){
         return salesService.update(salesDto);
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseDto<List<SalesDto>> getAllSales(){
         return salesService.getAllSales();
     }
-    @GetMapping
+    @GetMapping()
     public ResponseDto<List<SalesDto>> getExpiredOneDay(){
         return salesService.getExpiredOneDay();
     }

@@ -9,9 +9,6 @@ import uz.nt.salesservice.repository.SalesRepository;
 import uz.nt.salesservice.service.SalesService;
 import uz.nt.salesservice.service.mapper.SalesMapper;
 
-import java.awt.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -143,8 +140,8 @@ public class SalesServiceImpl implements SalesService {
 
         Sales sales = salesOptional.get();
 
-        if(salesDto.getExpressionDate() != null){
-            sales.setExpressionDate(salesDto.getExpressionDate());
+        if(salesDto.getExpirationDate() != null){
+            sales.setExpirationDate(salesDto.getExpirationDate());
         }
         if(salesDto.getPrice() != null){
             sales.setPrice(salesDto.getPrice());
@@ -175,7 +172,7 @@ public class SalesServiceImpl implements SalesService {
     public ResponseDto<List<SalesDto>> getExpiredOneDay() {
         Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
         return ResponseDto.<List<SalesDto>>builder()
-                .data(salesRepository.findAllByExpressionDateIsBefore(date).stream().map(salesMapper::toDto).toList())
+                .data(salesRepository.findAllByExpirationDateIsBefore(date).stream().map(salesMapper::toDto).toList())
                 .build();
     }
 }

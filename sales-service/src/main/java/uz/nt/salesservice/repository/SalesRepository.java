@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface SalesRepository extends JpaRepository<Sales, Integer> {
     Optional<Sales> findFirstById(Integer id);
-    List<Sales> findAllByExpressionDateIsBefore(Date date);
+    List<Sales> findAllByExpirationDateIsBefore(Date date);
 }
