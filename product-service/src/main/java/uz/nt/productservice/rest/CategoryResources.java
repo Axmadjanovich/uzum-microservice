@@ -2,10 +2,7 @@ package uz.nt.productservice.rest;
 
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.nt.productservice.dto.CategoryDto;
 import uz.nt.productservice.service.CategoryService;
 
@@ -18,6 +15,15 @@ public class CategoryResources {
     @PostMapping()
     public ResponseDto<CategoryDto> addNewCategory(@ModelAttribute CategoryDto categoryDto){
         return categoryService.addCategory(categoryDto);
+    }
+
+    @PatchMapping()
+    public ResponseDto<CategoryDto> editCategory(@RequestBody CategoryDto categoryDto){
+        return categoryService.updateCategory(categoryDto);
+    }
+    @GetMapping()
+    public ResponseDto<CategoryDto> viewAllProducts(){
+        return categoryService.getAll();
     }
 
 }

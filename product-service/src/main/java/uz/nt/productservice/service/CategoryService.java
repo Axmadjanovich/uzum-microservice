@@ -6,4 +6,7 @@ import uz.nt.productservice.dto.ProductDto;
 
 public interface CategoryService {
     ResponseDto<CategoryDto> addCategory(CategoryDto categoryDto);
+    ResponseDto<CategoryDto> updateCategory(CategoryDto categoryDto);
+    ResponseDto<CategoryDto> getAll();
+//    ResponseDto<CategoryDto> deleteCategory(Integer id);
 }
