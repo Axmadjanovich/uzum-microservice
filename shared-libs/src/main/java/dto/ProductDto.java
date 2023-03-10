@@ -1,4 +1,4 @@
-package uz.nt.productservice.dto;
+package dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,8 +16,7 @@ public class ProductDto {
     private Integer price;
     private Integer amount;
     private String description;
-    private CategoryDto category;
+    private Integer categoryId;
     private MultipartFile image;
     private Boolean isAvailable;
-    private UnitDto units;
 }
