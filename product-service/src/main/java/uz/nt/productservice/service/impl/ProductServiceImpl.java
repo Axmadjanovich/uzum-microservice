@@ -8,10 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import uz.nt.productservice.clients.Clients;
-import uz.nt.productservice.config.ForeignClientConfig;
+import uz.nt.productservice.clients.FileClient;
 import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.models.Product;
 import uz.nt.productservice.repository.ProductRepository;
@@ -21,8 +19,8 @@ import uz.nt.productservice.service.ProductService;
 import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.validator.ValidationService;
 import validator.AppStatusCodes;
-import validator.AppStatusMessages;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,11 +34,10 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
-
-    private final Clients clients;
+    private final FileClient fileClient;
 
     @Override
-    public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) {
+    public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) throws IOException {
 
         List<ErrorDto> errors = ValidationService.validation(productDto);
 
@@ -56,16 +53,15 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = productMapper.toEntity(productDto);
 
-        ResponseDto<Integer> integerResponseDto = clients.uploadFile(productDto.getImage());
-        if(!integerResponseDto.isSuccess()){
-                return ResponseDto.<ProductDto>builder()
-                        .message(integerResponseDto.getMessage())
-                        .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)
-                        .build();
+        ResponseDto<Integer> imageResponse = fileClient.uploadFile(productDto.getImage());
+        if (!imageResponse.isSuccess()){
+            return ResponseDto.<ProductDto>builder()
+                    .message(imageResponse.getMessage())
+                    .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)
+                    .build();
         }
 
-        product.setFileId(integerResponseDto.getData());
-
+        product.setFileId(imageResponse.getData());
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
