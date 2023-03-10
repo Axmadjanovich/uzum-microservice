@@ -13,6 +13,10 @@ import uz.nt.emailservice.service.EmailService;
 @RequestMapping("/email")
 @RequiredArgsConstructor
 public class EmailResources {
+
+    //TODO Har kuni 9:00 da scheduler ishlab, aksiya bo'layotgan mahsulotlar ro'yxatini emailga rasm va narxlari bilan
+    // yuboradi.
+
     private final EmailService emailService;
     @PostMapping
     public ResponseDto<Boolean> sendMessage(@RequestParam String email, String message){

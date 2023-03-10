@@ -8,7 +8,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.service.ProductService;
 
@@ -16,11 +15,17 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+//TODO Coders: miqdori 10 dan kam bo'lgan mahsulotlarni listini qaytarish
+
+//TODO Coders: Units jadvalini qo'shish va har bir mahsulot uchun o'lchov birligini biriktirish.
+// Units => id, shortName, name, description
 @RestController
 @RequestMapping("product")
 @RequiredArgsConstructor
 @Slf4j
 public class ProductResources {
+
+    //TODO Coders: Category qo'shish
 
     private final ProductService productService;
     private final Environment environment;
