@@ -230,11 +230,24 @@ public class UsersServiceImpl implements UsersService {
                         .message("Already send code your email")
                         .code(UNEXPECTED_ERROR_CODE)
                         .build();
-            }else{
-                return ResponseDto.<Void>builder()
-                        .message("Send verification code your email")
-                        .code(OK_CODE)
-                        .build();
+            }else {
+                if (emailClient.sentEmail(email, code).isSuccess()) {
+                    this.email = email;
+                    code = getCode();
+                    userVerification.setEmail(this.email);
+                    userVerification.setCode(code);
+                    userVerificationRepository.save(userVerification);
+                    return ResponseDto.<Void>builder()
+                            .message("Send verification code your email")
+                            .code(OK_CODE)
+                            .build();
+                }
+                else{
+                    return ResponseDto.<Void>builder()
+                            .code(UNEXPECTED_ERROR_CODE)
+                            .message("Don't send code your email")
+                            .build();
+                }
             }
         }else{
             return ResponseDto.<Void>builder()

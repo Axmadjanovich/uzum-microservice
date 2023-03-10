@@ -52,8 +52,5 @@ public class UsersResources {
     public ResponseDto<Page<EntityModel<ProductDto>>> getProductList(){
         return productClient.getProducts(10, 0);
     }
-    @GetMapping("/resent-code")
-    public ResponseDto<Void> resendEmail(@Valid @RequestParam("email") String email){
-        return usersService.resendCode(email);
-    }
+
 }
