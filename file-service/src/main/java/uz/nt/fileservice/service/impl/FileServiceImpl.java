@@ -137,25 +137,9 @@ public class FileServiceImpl implements Fileservices {
                     .code(AppStatusCodes.VALIDATION_ERROR_CODE)
                     .build();
         }
-
-        Optional<File> optional = Optional.empty();
         FileInputStream image = null;
 
-        if (size.toLowerCase().equals("LARGE")) {
-
-            optional = fileRepository.findByIdAndPathlarge(fileId, "path" + size.toLowerCase());
-            image = new FileInputStream(optional.get().getPathlarge());
-
-        } else if (size.toUpperCase().equals("MEDIUM")) {
-
-            optional = fileRepository.findByIdAndPathmedium(fileId, "path" + size.toLowerCase());
-            image = new FileInputStream(optional.get().getPathlarge());
-
-        } else if (size.toUpperCase().equals("SMALL")) {
-
-            optional = fileRepository.findByIdAndPathsmall(fileId, "path" + size.toLowerCase());
-            image = new FileInputStream(optional.get().getPathlarge());
-        }
+        Optional<File> optional = fileRepository.findById(fileId);
 
         if (optional.isEmpty()) {
             return ResponseDto.<byte[]>builder()
@@ -163,6 +147,19 @@ public class FileServiceImpl implements Fileservices {
                     .code(AppStatusCodes.NOT_FOUND_ERROR_CODE)
                     .build();
         }
+        if (size.toUpperCase().equals("LARGE")){
+            String pathlarge = optional.get().getPathlarge();
+             image = new FileInputStream(pathlarge);
+        }
+        if (size.toUpperCase().equals("MEDIUM")) {
+            String pathmedium = optional.get().getPathmedium();
+             image = new FileInputStream(pathmedium);
+        }
+        if (size.toUpperCase().equals("SMALL")) {
+            String pathsmall = optional.get().getPathsmall();
+             image = new FileInputStream(pathsmall);
+        }
+
 
         byte[] file = image.readAllBytes();
 
