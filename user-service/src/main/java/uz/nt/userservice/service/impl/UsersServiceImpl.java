@@ -149,15 +149,28 @@ public class UsersServiceImpl implements UsersService {
                     .build();
         }
 
-        if (userFromPSQL.get().getEnabled() == false && userFromRedis.isEmpty()){
+        if (userFromRedis.isEmpty() && userFromPSQL.get().getEnabled() == false){
             // redirect to resend
         }
 
+        if (!userFromRedis.get().getCode().equals(code)){
+            return ResponseDto.<UsersDto>builder()
+                    .code(VALIDATION_ERROR_CODE)
+                    .message("Provided code is not valid!")
+                    .build();
+        }
 
-        return ResponseDto.<UsersDto>builder()
-                .code(NOT_FOUND_ERROR_CODE)
-                .message(NOT_FOUND)
-                .build();
-
+        try {
+            usersRepository.setUserTrueByEmail(email);
+            return ResponseDto.<UsersDto>builder()
+                    .code(OK_CODE)
+                    .message("Successfully verified")
+                    .build();
+        }catch (Exception e){
+            return ResponseDto.<UsersDto>builder()
+                    .code(DATABASE_ERROR_CODE)
+                    .message(DATABASE_ERROR)
+                    .build();
+        }
     }
 }
