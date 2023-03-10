@@ -63,6 +63,12 @@ public class ProductResources {
     public ResponseDto<List<ProductDto>> getProducts(@RequestParam List<String> sort) {
         return productService.getAllProductsWithSort(sort);
     }
+
+    @GetMapping("report")
+    public ResponseDto<List<ProductDto>> getProductsForReport(){
+        return productService.getProductsForReport();
+    }
+
 //    @GetMapping("/expensive-by-category")
 //    public ResponseDto<Page<ProductDto>> getExpensiveProducts(){
 //        return productService.getExpensiveProducts();
