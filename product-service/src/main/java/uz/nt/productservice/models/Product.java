@@ -30,6 +30,8 @@ public class Product {
     @ManyToOne
     private Category category;
     private Boolean isAvailable;
+    @ManyToOne
+    private Units units;
 }
 //1. Product qo'shish
 //2. Bor productni o'zgartirish
