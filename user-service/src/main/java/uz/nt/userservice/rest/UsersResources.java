@@ -59,4 +59,9 @@ public class UsersResources {
         return usersService.verify(email, code);
     }
 
+    @GetMapping("/resend-code")
+    public ResponseDto<Void> resendCode(@RequestParam String email){
+        return usersService.resendCode(email);
+    }
+
 }

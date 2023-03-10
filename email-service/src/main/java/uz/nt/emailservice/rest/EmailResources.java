@@ -18,9 +18,9 @@ public class EmailResources {
     // yuboradi.
 
     private final EmailService emailService;
-    @PostMapping
-    public ResponseDto<Boolean> sendVerifyCode(@RequestParam String email, String message){
-        return emailService.sendEmail(email,message);
+    @PostMapping("/sendEmail")
+    public ResponseDto<Boolean> sendVerifyCode(@RequestParam String email, @RequestParam String code){
+        return emailService.sendEmail(email,code);
     }
 //    @PostMapping ResponseDto<Boolean> sendMessageSalesProduct(){
 //        return null;

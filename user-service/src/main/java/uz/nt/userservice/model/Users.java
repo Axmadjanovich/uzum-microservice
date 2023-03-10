@@ -9,7 +9,6 @@ import java.util.Date;
 @Table(name = "users")
 @Getter
 @Setter
-@NamedQuery(query = "update Users set enabled = true where email = :email", name = "setEnabledTrue")
 public class Users {
     @Id
     @GeneratedValue(generator = "userIdSequence")

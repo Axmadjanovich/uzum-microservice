@@ -2,6 +2,7 @@ package uz.nt.userservice.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,19 +18,30 @@ import java.util.Date;
 @NoArgsConstructor
 public class UsersDto {
     private Integer id;
-    @NotBlank(message = AppStatusMessages.EMPTY_STRING)
+    @NotNull(message = AppStatusMessages.NULL_VALUE)
+    @NotEmpty
     private String phoneNumber;
-    @NotBlank(message = AppStatusMessages.EMPTY_STRING)
+
+    @NotNull(message = AppStatusMessages.NULL_VALUE)
+    @NotEmpty
     private String firstName;
-    @NotBlank(message = AppStatusMessages.EMPTY_STRING)
+
+    @NotEmpty
+    @NotNull(message = AppStatusMessages.NULL_VALUE)
     private String lastName;
+
     private String middleName;
-    @NotBlank(message = AppStatusMessages.EMPTY_STRING)
+
+    @NotEmpty
+    @NotNull(message = AppStatusMessages.NULL_VALUE)
     @Email(message = AppStatusMessages.NOT_VALID_EMAIL)
     private String email;
+
     private String gender;
     private Date birthDate;
-    @NotBlank(message = AppStatusMessages.EMPTY_STRING)
+
+    @NotNull(message = AppStatusMessages.NULL_VALUE)
+    @NotEmpty
     private String password;
     private String role;
 

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient("email-service")
 public interface EmailClient {
 
-    @PostMapping("sendVerifyCode")
-    ResponseDto<Boolean> sentEmail(@RequestParam("email") String email,
+    @PostMapping("/email/sendEmail")
+    ResponseDto<Boolean> sendEmail(@RequestParam("email") String email,
                                    @RequestParam("code") String code);
 }
