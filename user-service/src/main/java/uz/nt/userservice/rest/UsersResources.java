@@ -52,4 +52,9 @@ public class UsersResources {
     public ResponseDto<Page<EntityModel<ProductDto>>> getProductList(){
         return productClient.getProducts(10, 0);
     }
+
+    @GetMapping("/verify")
+    public ResponseDto<UsersDto> verify(@RequestParam String email, @RequestParam String code){
+        return usersService.verify(email, code);
+    }
 }
