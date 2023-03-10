@@ -19,5 +19,5 @@ public class ProductDto {
     private CategoryDto category;
     private MultipartFile image;
     private Boolean isAvailable;
-    private UnitDto unitDto;
+    private UnitDto units;
 }

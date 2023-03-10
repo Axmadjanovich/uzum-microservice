@@ -30,6 +30,7 @@ public class ProductResources {
     private final ProductService productService;
     private final Environment environment;
 
+    /**POST qilishda form-data'ga Category id, Unit id qo'shish uchun-> category.id, units.id**/
     @PostMapping(consumes = {"multipart/form-data", "application/json"})
     public ResponseDto<ProductDto> addNewProduct(@ModelAttribute ProductDto productDto) throws IOException {
         return productService.addNewProduct(productDto);
