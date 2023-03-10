@@ -53,4 +53,9 @@ public class UsersResources {
         return productClient.getProducts(10, 0);
     }
 
+    @GetMapping("/verify")
+    public ResponseDto<Void> verify(@RequestParam String email, @RequestParam String code){
+        return usersService.verify(email, code);
+    }
+
 }

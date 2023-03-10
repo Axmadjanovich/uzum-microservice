@@ -175,30 +175,30 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public ResponseDto<UsersDto> verify(String email, String code) {
+    public ResponseDto<Void> verify(String email, String code) {
         Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
         Optional<Users> userFromPSQL = usersRepository.findFirstByEmail(email);
 
         if (userFromPSQL.isEmpty() && userFromRedis.isEmpty()){
-            return ResponseDto.<UsersDto>builder()
+            return ResponseDto.<Void>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
                     .build();
         }
 
         if (userFromPSQL.isPresent() && userFromPSQL.get().getEnabled()){
-            return ResponseDto.<UsersDto>builder()
+            return ResponseDto.<Void>builder()
                     .code(UNEXPECTED_ERROR_CODE)
                     .message(DUPLICATE_ERROR)
                     .build();
         }
 
         if (userFromRedis.isEmpty() && userFromPSQL.get().getEnabled() == false){
-            // redirect to resend
+            resendCode(email);
         }
 
         if (!userFromRedis.get().getCode().equals(code)){
-            return ResponseDto.<UsersDto>builder()
+            return ResponseDto.<Void>builder()
                     .code(VALIDATION_ERROR_CODE)
                     .message("Provided code is not valid!")
                     .build();
@@ -206,12 +206,12 @@ public class UsersServiceImpl implements UsersService {
 
         try {
             usersRepository.setUserTrueByEmail(email);
-            return ResponseDto.<UsersDto>builder()
+            return ResponseDto.<Void>builder()
                     .code(OK_CODE)
                     .message("Successfully verified")
                     .build();
         }catch (Exception e){
-            return ResponseDto.<UsersDto>builder()
+            return ResponseDto.<Void>builder()
                     .code(DATABASE_ERROR_CODE)
                     .message(DATABASE_ERROR)
                     .build();
