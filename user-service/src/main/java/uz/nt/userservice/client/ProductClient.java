@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient("product-service")
-public interface ProductClient {
+public interface
+ProductClient {
 
     @GetMapping("product")
     ResponseDto<Page<EntityModel<ProductDto>>> getProducts(@RequestParam(defaultValue = "10") Integer size,
