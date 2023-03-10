@@ -1,10 +1,12 @@
 package uz.nt.userservice.service.impl;
 
+import dto.ErrorDto;
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
+import uz.nt.userservice.client.EmailClient;
 import uz.nt.userservice.config.PasswordGenerator;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.model.UserVerification;
@@ -26,25 +28,54 @@ import static validator.AppStatusCodes.*;
 public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
     private final UsersMapper userMapper;
+
+    private final EmailClient emailClient;
     private final UserVerificationRepository userVerificationRepository;
 
     private final UserVerification userVerification;
     private final PasswordGenerator passwordGenerator;
-
-    private String password;
-
     private String email;
+    private String code;
 
     @Override
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
 
         if(firstByEmail.isEmpty()){
-            usersRepository.save(userMapper.toEntity(dto));
             email = dto.getEmail();
-            password = passwordGenerator.geek_Password();
-        }else{
+            code = getCode();
+            usersRepository.save(userMapper.toEntity(dto));
 
+            if(emailClient.sentEmail(email,code).isSuccess()){
+                userVerification.setEmail(email);
+                userVerification.setCode(code);
+                userVerificationRepository.save(userVerification);
+                return ResponseDto.<UsersDto>builder()
+                        .message("Send verification code your email")
+                        .data(dto)
+                        .code(OK_CODE)
+                        .success(true)
+                        .build();
+            }else{
+                return ResponseDto.<UsersDto>builder()
+                        .code(UNEXPECTED_ERROR_CODE)
+                        .data(dto)
+                        .message("Don't send code your email")
+                        .build();
+            }
+
+        }else{
+              if(!firstByEmail.isEmpty() && firstByEmail.get().getEnabled()){
+                  return ResponseDto.<UsersDto>builder()
+                          .code(UNEXPECTED_ERROR_CODE)
+                          .message("This email already exists")
+                          .build();
+              }else{
+                  return ResponseDto.<UsersDto>builder()
+                          .code(UNEXPECTED_ERROR_CODE)
+                          .message("This email already exists but don't verify")
+                          .build();
+              }
         }
 
 
@@ -171,6 +202,33 @@ public class UsersServiceImpl implements UsersService {
                 .code(NOT_FOUND_ERROR_CODE)
                 .message(NOT_FOUND)
                 .build();
+
+    }
+
+    private String getCode(){
+       return passwordGenerator.geek_Password();
+    }
+
+    public ResponseDto<Void> resendCode(String email) {
+        Optional<Users> optional = usersRepository.findFirstByEmail(email);
+        if(!optional.isEmpty()){
+            if(userVerificationRepository.existsById(email)){
+                return ResponseDto.<Void>builder()
+                        .message("Already send code your email")
+                        .code(UNEXPECTED_ERROR_CODE)
+                        .build();
+            }else{
+                return ResponseDto.<Void>builder()
+                        .message("Send verification code your email")
+                        .code(OK_CODE)
+                        .build();
+            }
+        }else{
+            return ResponseDto.<Void>builder()
+                    .message(NOT_FOUND)
+                    .code(UNEXPECTED_ERROR_CODE)
+                    .build();
+        }
 
     }
 }
