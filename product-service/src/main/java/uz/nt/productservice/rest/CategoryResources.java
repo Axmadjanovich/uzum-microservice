@@ -13,7 +13,7 @@ public class CategoryResources {
     private final CategoryService categoryService;
 
     @PostMapping()
-    public ResponseDto<CategoryDto> addNewCategory(@ModelAttribute CategoryDto categoryDto){
+    public ResponseDto<CategoryDto> addNewCategory(@RequestBody CategoryDto categoryDto){
         return categoryService.addCategory(categoryDto);
     }
 
