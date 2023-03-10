@@ -1,5 +1,6 @@
 package uz.nt.userservice.rest;
 
+import dto.ProductDto;
 import dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
-import uz.nt.productservice.dto.ProductDto;
 import uz.nt.userservice.client.ProductClient;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.service.impl.UsersServiceImpl;
