@@ -8,8 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Integer> {
-
-    Optional<File> findByIdAndPathlarge(Integer id, String pathLarge);
-    Optional<File> findByIdAndPathmedium(Integer id, String pathMedium);
-    Optional<File> findByIdAndPathsmall(Integer id, String pathSmall);
 }
