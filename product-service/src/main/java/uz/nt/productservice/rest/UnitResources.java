@@ -27,4 +27,8 @@ public class UnitResources {
     public ResponseDto<UnitDto> updateUnit(@RequestBody UnitDto unitDto){
         return unitService.updateUnit(unitDto);
     }
+    @DeleteMapping
+    public ResponseDto<UnitDto> deleteUnit(@RequestParam  Integer id){
+        return unitService.deleteUnit(id);
+    }
 }

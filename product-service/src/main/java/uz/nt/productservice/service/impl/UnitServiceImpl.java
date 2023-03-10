@@ -89,4 +89,27 @@ public class UnitServiceImpl implements UnitService {
                     .build();
         }
     }
+
+    @Override
+    public ResponseDto<UnitDto> deleteUnit(Integer id) {
+        Optional<Units> optionalUser = unitRepository.findById(id);
+
+        if(optionalUser.isEmpty()){
+            return ResponseDto.<UnitDto>builder()
+                    .message(NOT_FOUND)
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .success(false)
+                    .build();
+        }
+
+        Units users = optionalUser.get();
+
+        unitRepository.deleteById(id);
+
+        return ResponseDto.<UnitDto>builder()
+                .message("User with ID " + id + " is deleted")
+                .code(OK_CODE)
+                .data(unitMapper.toDto(users))
+                .build();
+    }
 }
