@@ -22,7 +22,7 @@ public class EmailResources {
     public ResponseDto<Boolean> sendVerifyCode(@RequestParam String email, String message){
         return emailService.sendEmail(email,message);
     }
-    @PostMapping ResponseDto<Boolean> sendMessageSalesProduct(){
-        return null;
+    @PostMapping("image") ResponseDto<Boolean> sendMessageSalesProduct(@RequestParam String email){
+        return emailService.sendEmailWithImage(email);
     }
 }

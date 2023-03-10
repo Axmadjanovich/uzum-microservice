@@ -1,20 +1,29 @@
 package uz.nt.emailservice.service;
 
 import dto.ResponseDto;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import uz.nt.emailservice.clients.FileClient;
+import uz.nt.emailservice.dto.SalesDto;
+
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender mailSender;
+    private final FileClient fileClient;
     private final TemplateEngine templateEngine;
+    //private final SalesClient salesClient;
     public ResponseDto<Boolean> sendEmail(String toEmail, String code){
         try {
             MimeMessage sendMessage = mailSender.createMimeMessage();
@@ -22,7 +31,6 @@ public class EmailService {
             helper.setTo(toEmail);
             helper.setSubject("Uzum verify");
 
-            Context context =new Context();
             String url = "http://localhost:9006/user/verify?email=" + toEmail + "&code=" + code;
             String htmlMessage = "<!DOCTYPE html>\n" +
                     "<html>\n" +
@@ -256,6 +264,43 @@ public class EmailService {
             System.out.println(e.getMessage());
             return ResponseDto.<Boolean>builder()
                     .message("Error: "+e.getMessage())
+                    .code(-2)
+                    .data(false)
+                    .success(false)
+                    .build();
+        }
+    }
+
+//    public  ResponseDto<List<SalesDto>> getSaleProduct(){
+//        return salesClient.getSalesProductExp();
+//    }
+    public ResponseDto<Boolean> sendEmailWithImage(String toEmail){
+        try {
+            MimeMessage sendMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(sendMessage, true);
+            helper.setTo(toEmail);
+            helper.setSubject("Uzum market jegirmalar");
+
+            String text = "<h2>Jegirma haqida malumot headeri</h2>";
+
+            helper.setText(text, true);
+
+            ByteArrayResource image = new ByteArrayResource(fileClient.getFileBytes(1).getData());
+
+            helper.addAttachment("image.jpg", image);
+
+            mailSender.send(sendMessage);
+
+            return ResponseDto.<Boolean>builder()
+                    .message("OK")
+                    .code(0)
+                    .success(true)
+                    .data(true)
+                    .build();
+
+        }catch (Exception e) {
+            return ResponseDto.<Boolean>builder()
+                    .message("Error: " + e.getMessage())
                     .code(-2)
                     .data(false)
                     .success(false)
