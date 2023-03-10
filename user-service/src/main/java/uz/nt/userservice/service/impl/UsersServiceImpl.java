@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
+import uz.nt.userservice.config.PasswordGenerator;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.model.UserVerification;
 import uz.nt.userservice.model.Users;
@@ -27,13 +28,21 @@ public class UsersServiceImpl implements UsersService {
     private final UsersMapper userMapper;
     private final UserVerificationRepository userVerificationRepository;
 
+    private final UserVerification userVerification;
+    private final PasswordGenerator passwordGenerator;
+
+    private String password;
+
+    private String email;
+
     @Override
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
 
         if(firstByEmail.isEmpty()){
             usersRepository.save(userMapper.toEntity(dto));
-
+            email = dto.getEmail();
+            password = passwordGenerator.geek_Password();
         }else{
 
         }
@@ -41,11 +50,7 @@ public class UsersServiceImpl implements UsersService {
 
         //TODO AppMonsters: User emailiga xabar yuborish.
 
-        return ResponseDto.<UsersDto>builder()
-                .success(true)
-                .data(userMapper.toDto(users))
-                .message("OK")
-                .build();
+
     }
 
     @Override
