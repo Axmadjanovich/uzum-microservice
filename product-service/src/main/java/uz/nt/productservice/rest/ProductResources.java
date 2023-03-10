@@ -68,12 +68,9 @@ public class ProductResources {
 //        return productService.getExpensiveProducts();
 //    }
 
-
-
-//
-//    @GetMapping("sort")
-//    public ResponseDto<List<ProductDto>> getProducts(@RequestParam List<String> sort){
-//        return productService.getAllProductsWithSort(sort);
-//    }
+    @GetMapping("/expensive-by-category")
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        return productService.getExpensiveProducts();
+    }
 
 }
