@@ -16,9 +16,6 @@ public class PasswordGenerator
 
     public String geek_Password()
     {
-        System.out.println("Generating password using random() : ");
-        System.out.print("Your new password is : ");
-
 
         String Capital_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String Small_chars = "abcdefghijklmnopqrstuvwxyz";
