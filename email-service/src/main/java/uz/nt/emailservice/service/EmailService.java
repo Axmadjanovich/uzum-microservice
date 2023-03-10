@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender mailSender;
-    private final FileClient fileClient;
+    //private final FileClient fileClient;
     private final ProductClient productClient;
     private final SalesClient salesClient;
 
@@ -278,8 +278,8 @@ public class EmailService {
             helper.setText(text, true);
             helper.setTo(email);
             for(SalesDto pr: products){
-                ByteArrayResource img = new ByteArrayResource(fileClient.getFileBytes(pr.getProduct_id()).getData());
-                helper.addAttachment("image.jpg", img);
+//                ByteArrayResource img = new ByteArrayResource(fileClient.getFileBytes(pr.getProduct_id()).getData());
+//                helper.addAttachment("image.jpg", img);
                 helper.setText("<h2>"+productClient.getProductBtId(pr.getProduct_id()).getData().getName()+"</h2>"+
                         "<h3>Eski narx</h3"+
                         "<h3>"+productClient.getProductBtId(pr.getProduct_id()).getData().getPrice()+"</h3>"+

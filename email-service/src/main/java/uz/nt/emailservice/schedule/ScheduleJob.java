@@ -21,7 +21,7 @@ public class ScheduleJob {
     @Autowired
     EmailService emailService;
     @Transactional
-    @Scheduled(cron = "0 9 0 * * *")
+    @Scheduled(cron = "0 2 * * * *")
     public void sendEmailSaleProduct(){
         List<UsersDto> users = userClient.getEmail().getData();
         if(!users.isEmpty())

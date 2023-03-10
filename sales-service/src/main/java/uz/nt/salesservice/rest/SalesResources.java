@@ -25,7 +25,7 @@ public class SalesResources {
     public ResponseDto<SalesDto> update(@RequestBody SalesDto salesDto){
         return salesService.update(salesDto);
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseDto<List<SalesDto>> getAllSales(){
         return salesService.getAllSales();
     }
