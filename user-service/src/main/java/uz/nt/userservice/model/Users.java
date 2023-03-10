@@ -22,7 +22,7 @@ public class Users {
     private String gender;
     private Date birthDate;
     private String password;
-    private Boolean enabled;
+    private Boolean enabled = false;
     @Column(columnDefinition = "text default 'USER'")
     private String role = "USER";
 }

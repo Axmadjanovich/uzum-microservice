@@ -32,4 +32,5 @@ public class UsersDto {
     @NotBlank(message = AppStatusMessages.EMPTY_STRING)
     private String password;
     private String role;
+
 }

@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface UsersRepository extends JpaRepository<Users, Integer> {
     Optional<Users> findFirstByPhoneNumber(String phoneNumber);
     Optional<Users> findFirstByEmail(String email);
+
 }

@@ -29,8 +29,16 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
-        Users users = userMapper.toEntity(dto);
-        usersRepository.save(users);
+        Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
+
+        if(firstByEmail.isEmpty()){
+            usersRepository.save(userMapper.toEntity(dto));
+
+        }else{
+
+        }
+
+
         //TODO AppMonsters: User emailiga xabar yuborish.
 
         return ResponseDto.<UsersDto>builder()
