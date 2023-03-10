@@ -18,7 +18,7 @@ import java.util.List;
 @FeignClient(name = "file-service")
 public interface FileClient {
 
-    @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file);
 
     @PostMapping(value = "/file/report")
