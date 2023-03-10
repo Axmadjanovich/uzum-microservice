@@ -12,4 +12,5 @@ public interface Fileservices {
     ResponseDto<Integer> fileUpload(MultipartFile file);
 
     void reportProducts(List<ProductDto> productDtoList) throws IOException;
+    ResponseDto<Integer> imageUpload(MultipartFile file) throws IOException;
 }

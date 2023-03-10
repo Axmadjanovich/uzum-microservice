@@ -10,6 +10,9 @@ import uz.nt.fileservice.repository.FileRepository;
 import uz.nt.fileservice.service.Fileservices;
 import uz.nt.productservice.dto.ProductDto;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,31 +30,7 @@ public class FileServiceImpl implements Fileservices {
     private final FileRepository fileRepository;
 
     private final ExcelWriter excelWriter;
-    @Override
-    public ResponseDto<Integer> fileUpload(MultipartFile file) {
-        File fileEntity = new File();
-        fileEntity.setExt(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
-        fileEntity.setCreatedAt(LocalDateTime.now());
 
-        try {
-            String filePath;
-            Files.copy(file.getInputStream(), Path.of(filePath = filePath("images",fileEntity.getExt())));
-            fileEntity.setPath(filePath);
-            File savedFile = fileRepository.save(fileEntity);
-
-            return ResponseDto.<Integer>builder()
-                    .data(savedFile.getId())
-                    .message("OK")
-                    .success(true)
-                    .build();
-        } catch (IOException e) {
-            log.error("Error while saving file: {}", e.getMessage());
-            return ResponseDto.<Integer>builder()
-                    .code(2)
-                    .message("Error while saving file: " + e.getMessage())
-                    .build();
-        }
-    }
 
     public static String filePath(String folder,String ext){
         LocalDate localDate = LocalDate.now();
@@ -75,5 +54,53 @@ public class FileServiceImpl implements Fileservices {
         outputStream.close();
         excelWriter.workbook.close();
 
+    }
+
+    @Override
+    public ResponseDto<Integer> imageUpload(MultipartFile file) throws IOException {
+        File lowImageEntity = new File();
+        File medium ImageEntity = new File();
+        File lowImageEntity = new File();
+
+        fileEntity.setExt(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
+        fileEntity.setCreatedAt(LocalDateTime.now());
+
+        BufferedImage bufferedImage= ImageIO.read((java.io.File) file);
+
+        BufferedImage low = resizeImage(bufferedImage, bufferedImage.getWidth()/3, bufferedImage.getHeight()/3);
+        BufferedImage medium = resizeImage(bufferedImage, bufferedImage.getWidth()/2, bufferedImage.getHeight()/2);
+        BufferedImage high = resizeImage(bufferedImage, bufferedImage.getWidth(), bufferedImage.getHeight());
+
+        ImageIO.write(low, "gif", new java.io.File("/home/karimjon/Downloads/image.gif"));
+        ImageIO.write(medium, "jpg", new java.io.File("/home/karimjon/Downloads/image.png"));
+        ImageIO.write(high, "bmp", new java.io.File("/home/karimjon/Downloads/image.bmp"));
+
+        try {
+            String filePath;
+            Files.copy(file.getInputStream(), Path.of(filePath = filePath("images/",fileEntity.getExt())));
+            fileEntity.setPath(filePath);
+            File savedFile = fileRepository.save(fileEntity);
+
+            return ResponseDto.<Integer>builder()
+                    .data(savedFile.getId())
+                    .message("OK")
+                    .success(true)
+                    .build();
+        } catch (IOException e) {
+            log.error("Error while saving file: {}", e.getMessage());
+            return ResponseDto.<Integer>builder()
+                    .code(2)
+                    .message("Error while saving file: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    public static BufferedImage resizeImage (BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = resizedImage.createGraphics();
+        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.dispose();
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        return resizedImage;
     }
 }
