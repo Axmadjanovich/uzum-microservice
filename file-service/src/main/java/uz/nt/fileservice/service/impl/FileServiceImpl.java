@@ -36,7 +36,7 @@ public class FileServiceImpl implements Fileservices {
     private final ExcelWriter excelWriter;
 
     public static String filePath(String folder, String ext, boolean uuidActive) {
-        java.io.File file = new java.io.File("upload/" + folder + "/");
+        java.io.File file = new java.io.File("upload"+ "/" + folder + "/");
         if (!file.exists()) {
             file.mkdirs();
         }
@@ -46,7 +46,7 @@ public class FileServiceImpl implements Fileservices {
         } else {
             fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }
-        return file.getPath() + "\\" + fileName + ext;
+        return file.getPath() + "/" + fileName + ext;
     }
 
     @Override
