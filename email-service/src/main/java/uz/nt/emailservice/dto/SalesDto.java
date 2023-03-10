@@ -1,7 +1,9 @@
 package uz.nt.emailservice.dto;
 
-import java.util.Date;
+import lombok.Getter;
 
+import java.util.Date;
+@Getter
 public class SalesDto {
     private Integer id;
     private Integer product_id;

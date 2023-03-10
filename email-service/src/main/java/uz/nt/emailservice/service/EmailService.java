@@ -1,29 +1,26 @@
 package uz.nt.emailservice.service;
 
 import dto.ResponseDto;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-
 import uz.nt.emailservice.clients.FileClient;
+import uz.nt.emailservice.clients.ProductClient;
+import uz.nt.emailservice.clients.SalesClient;
 import uz.nt.emailservice.dto.SalesDto;
-
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender mailSender;
     private final FileClient fileClient;
-    private final TemplateEngine templateEngine;
-    //private final SalesClient salesClient;
+    private final ProductClient productClient;
+    private final SalesClient salesClient;
+
     public ResponseDto<Boolean> sendEmail(String toEmail, String code){
         try {
             MimeMessage sendMessage = mailSender.createMimeMessage();
@@ -271,24 +268,26 @@ public class EmailService {
         }
     }
 
-//    public  ResponseDto<List<SalesDto>> getSaleProduct(){
-//        return salesClient.getSalesProductExp();
-//    }
-    public ResponseDto<Boolean> sendEmailWithImage(String toEmail){
+    public ResponseDto<Boolean> sendEmailAboutSalesProduct(String email){
+        List<SalesDto> products = salesClient.getSalesProductExp().getData();
         try {
             MimeMessage sendMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(sendMessage, true);
-            helper.setTo(toEmail);
             helper.setSubject("Uzum market jegirmalar");
-
             String text = "<h2>Jegirma haqida malumot headeri</h2>";
-
             helper.setText(text, true);
+            helper.setTo(email);
+            for(SalesDto pr: products){
+                ByteArrayResource img = new ByteArrayResource(fileClient.getFileBytes(pr.getProduct_id()).getData());
+                helper.addAttachment("image.jpg", img);
+                helper.setText("<h2>"+productClient.getProductBtId(pr.getProduct_id()).getData().getName()+"</h2>"+
+                        "<h3>Eski narx</h3"+
+                        "<h3>"+productClient.getProductBtId(pr.getProduct_id()).getData().getPrice()+"</h3>"+
+                        "<h3>chegirmadagi narxi</h3"+
+                                "<h3>"+pr.getPrice()+"</h3"
+                );
 
-            ByteArrayResource image = new ByteArrayResource(fileClient.getFileBytes(1).getData());
-
-            helper.addAttachment("image.jpg", image);
-
+            }
             mailSender.send(sendMessage);
 
             return ResponseDto.<Boolean>builder()
