@@ -6,7 +6,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 import uz.nt.userservice.dto.UsersDto;
+import uz.nt.userservice.model.UserVerification;
 import uz.nt.userservice.model.Users;
+import uz.nt.userservice.repository.UserVerificationRepository;
 import uz.nt.userservice.repository.UsersRepository;
 import uz.nt.userservice.service.UsersService;
 import uz.nt.userservice.service.mapper.UsersMapper;
@@ -15,11 +17,15 @@ import validator.AppStatusMessages;
 
 import java.util.Optional;
 
+import static validator.AppStatusMessages.*;
+import static validator.AppStatusCodes.*;
+
 @Service
 @RequiredArgsConstructor
 public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
     private final UsersMapper userMapper;
+    private final UserVerificationRepository userVerificationRepository;
 
     @Override
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
@@ -118,9 +124,40 @@ public class UsersServiceImpl implements UsersService {
                         .data(userMapper.toDto(u))
                         .build()
                 ).orElse(ResponseDto.<UsersDto>builder()
-                        .message(AppStatusMessages.NOT_FOUND)
+                        .message(NOT_FOUND)
                         .code(AppStatusCodes.NOT_FOUND_ERROR_CODE)
                         .build());
+
+    }
+
+    @Override
+    public ResponseDto<UsersDto> verify(String email, String code) {
+        Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
+        Optional<Users> userFromPSQL = usersRepository.findFirstByEmail(email);
+
+        if (userFromPSQL.isEmpty() && userFromRedis.isEmpty()){
+            return ResponseDto.<UsersDto>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+
+        if (userFromPSQL.isPresent() && userFromPSQL.get().getEnabled()){
+            return ResponseDto.<UsersDto>builder()
+                    .code(UNEXPECTED_ERROR_CODE)
+                    .message(DUPLICATE_ERROR)
+                    .build();
+        }
+
+        if (userFromPSQL.get().getEnabled() == false && userFromRedis.isEmpty()){
+            // redirect to resend
+        }
+
+
+        return ResponseDto.<UsersDto>builder()
+                .code(NOT_FOUND_ERROR_CODE)
+                .message(NOT_FOUND)
+                .build();
 
     }
 }
