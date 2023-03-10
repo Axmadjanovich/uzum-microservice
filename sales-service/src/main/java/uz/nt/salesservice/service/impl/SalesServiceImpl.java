@@ -9,8 +9,10 @@ import uz.nt.salesservice.repository.SalesRepository;
 import uz.nt.salesservice.service.SalesService;
 import uz.nt.salesservice.service.mapper.SalesMapper;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +38,7 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public ResponseDto<List<SalesDto>> geAllSales() {
+    public ResponseDto<List<SalesDto>> getAllSales() {
         return ResponseDto.<List<SalesDto>>builder()
                 .data(salesRepository.findAll().stream().map(salesMapper::toDto).toList())
                 .build();
@@ -142,7 +144,7 @@ public class SalesServiceImpl implements SalesService {
         Sales sales = salesOptional.get();
 
         if(salesDto.getExpressionDate() != null){
-            sales.setExpressionDate(LocalDate.parse( salesDto.getExpressionDate(), DateTimeFormatter.ofPattern( "dd.MM.yyyy" )));
+            sales.setExpressionDate(salesDto.getExpressionDate());
         }
         if(salesDto.getPrice() != null){
             sales.setPrice(salesDto.getPrice());
@@ -167,5 +169,13 @@ public class SalesServiceImpl implements SalesService {
                     .code(DATABASE_ERROR_CODE)
                     .build();
         }
+    }
+
+    @Override
+    public ResponseDto<List<SalesDto>> getExpiredOneDay() {
+        Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+        return ResponseDto.<List<SalesDto>>builder()
+                .data(salesRepository.findAllByExpressionDateIsBefore(date).stream().map(salesMapper::toDto).toList())
+                .build();
     }
 }

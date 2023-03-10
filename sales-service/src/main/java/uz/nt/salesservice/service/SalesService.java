@@ -10,7 +10,7 @@ import java.util.List;
 public interface SalesService {
     ResponseDto<SalesDto> addSales(SalesDto salesDto);
 
-    ResponseDto<List<SalesDto>> geAllSales();
+    ResponseDto<List<SalesDto>> getAllSales();
 
     ResponseDto<SalesDto> getById(Integer id);
 
@@ -19,4 +19,6 @@ public interface SalesService {
     ResponseDto<List<SalesDto>> deleteAll();
 
     ResponseDto<SalesDto> update(SalesDto salesDto);
+
+    ResponseDto<List<SalesDto>> getExpiredOneDay();
 }

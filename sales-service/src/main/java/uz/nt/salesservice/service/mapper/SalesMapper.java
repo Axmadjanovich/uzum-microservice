@@ -8,10 +8,8 @@ import uz.nt.salesservice.model.Sales;
 @Mapper(componentModel = "spring")
 public interface SalesMapper {
 
-    @Mapping(target = "expressionDate", dateFormat = "dd.MM.yyyy")
     SalesDto toDto(Sales sales);
 
-    @Mapping(target = "expressionDate", dateFormat = "dd.MM.yyyy")
     Sales toEntity(SalesDto dto);
 
 }

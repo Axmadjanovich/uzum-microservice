@@ -29,6 +29,6 @@ public class Sales {
 
     private Integer price;
 
-    private LocalDate expressionDate;
+    private Date expressionDate;
 
 }

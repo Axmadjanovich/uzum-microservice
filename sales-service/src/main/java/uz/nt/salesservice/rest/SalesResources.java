@@ -3,8 +3,6 @@ package uz.nt.salesservice.rest;
 import dto.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.salesservice.dto.SalesDto;
 import uz.nt.salesservice.service.SalesService;
@@ -29,7 +27,11 @@ public class SalesResources {
     }
     @GetMapping
     public ResponseDto<List<SalesDto>> getAllSales(){
-        return salesService.geAllSales();
+        return salesService.getAllSales();
+    }
+    @GetMapping
+    public ResponseDto<List<SalesDto>> getExpiredOneDay(){
+        return salesService.getExpiredOneDay();
     }
 
     @GetMapping("/{id}")
