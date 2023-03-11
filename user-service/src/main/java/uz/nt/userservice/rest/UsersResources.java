@@ -14,6 +14,8 @@ import uz.nt.userservice.client.ProductClient;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.service.impl.UsersServiceImpl;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
