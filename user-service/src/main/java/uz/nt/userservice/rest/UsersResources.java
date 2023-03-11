@@ -19,7 +19,7 @@ import uz.nt.userservice.service.impl.UsersServiceImpl;
 @RequiredArgsConstructor
 public class UsersResources {
     private final UsersServiceImpl usersService;
-    private final ProductClient productClient;
+    private ProductClient productClient;
     //TODO AppMonsters: ValidationError uchun ExceptionHandler yozish
     @Operation(
             method = "Add new User",
