@@ -222,7 +222,7 @@ public class UsersServiceImpl implements UsersService {
                     .message(NOT_FOUND)
                     .build();
         }
-        // Uje databasada true
+        // Databaseda bor va true
         if (userFromPSQL.isPresent() && userFromPSQL.get().getEnabled()) {
             return ResponseDto.<Void>builder()
                     .code(UNEXPECTED_ERROR_CODE)
@@ -230,7 +230,7 @@ public class UsersServiceImpl implements UsersService {
                     .build();
         }
 
-        // bazadda bor, redisda yuq va bazada false
+        // Databaseda bor va enabled false lekin redisda yo'q
         if (userFromPSQL.isPresent() && userFromPSQL.get().getEnabled() == false && userFromRedis.isEmpty()) {
             if (emailClient.sendEmail(email, code).isSuccess()) {
                 userVerificationRepository.save(new UserVerification(email, code));
