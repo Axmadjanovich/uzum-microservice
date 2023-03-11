@@ -275,7 +275,7 @@ public class EmailService {
             MimeMessage sendMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(sendMessage, true);
             helper.setSubject("Uzum market jegirmalar");
-            String text = "<h2>Jegirma haqida malumot headeri</h2>";
+            String text = "<h2>Jegirma tugashiga bir kun qoldi ulgurib qoling</h2>";
             helper.setText(text, true);
             helper.setTo(email);
             for(SalesDto pr: products){

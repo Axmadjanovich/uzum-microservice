@@ -16,14 +16,14 @@ import java.util.List;
 @Configuration
 @EnableAsync
 public class ScheduleJob {
-    @Autowired
-    UserClient userClient;
+//    @Autowired
+//    UserClient userClient;
     @Autowired
     EmailService emailService;
     @Transactional
     @Scheduled(cron = "0 2 * * * *")
     public void sendEmailSaleProduct(){
-        UsersDto users = userClient.getEmail(60).getData();
-        emailService.sendEmailAboutSalesProduct(users.getEmail());
+        //UsersDto users = userClient.getEmail(60).getData();
+        //emailService.sendEmailAboutSalesProduct(users.getEmail());
     }
 }

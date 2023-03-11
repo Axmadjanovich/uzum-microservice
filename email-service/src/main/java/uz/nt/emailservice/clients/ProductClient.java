@@ -8,5 +8,5 @@ import uz.nt.emailservice.dto.ProductDto;
 @FeignClient(name = "product-service")
 public interface ProductClient {
     @GetMapping("product/by-id")
-    ResponseDto<ProductDto> getProductBtId(@RequestParam Integer id);
+    ResponseDto<ProductDto> getProductById(@RequestParam Integer id);
 }
