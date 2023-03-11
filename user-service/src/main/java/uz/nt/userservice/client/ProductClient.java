@@ -12,6 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface ProductClient {
 
     @GetMapping("product")
-    ResponseDto<Page<EntityModel<ProductDto>>> getProducts(@RequestParam(defaultValue = "10") Integer size,
-                                                           @RequestParam(defaultValue = "0") Integer page);
+    ResponseDto<Page<EntityModel<ProductDto>>> getProducts(@RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                           @RequestParam(value = "page", defaultValue = "0") Integer page);
 }
