@@ -16,7 +16,8 @@ public class ProductDto {
     private Integer price;
     private Integer amount;
     private String description;
-    private Integer categoryId;
+    private CategoryDto category;
     private MultipartFile image;
     private Boolean isAvailable;
+    private UnitDto units;
 }
