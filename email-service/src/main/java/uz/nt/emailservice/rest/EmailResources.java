@@ -28,7 +28,7 @@ public class EmailResources {
     private final UserClient userClient;
     private final ProductClient productClient;
     private final FileClient fileClient;
-    @PostMapping
+    @PostMapping("/sendEmail")
     public ResponseDto<Boolean> sendVerifyCode(@RequestParam String email, @RequestParam String message){
         return emailService.sendEmail(email,message);
     }
