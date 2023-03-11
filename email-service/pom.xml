@@ -8,6 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
     </parent>
+    <groupId>uz.nt</groupId>
     <artifactId>email-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>email-service</name>
