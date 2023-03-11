@@ -27,9 +27,6 @@ public class EmailResources {
     public ResponseDto<Boolean> sendVerifyCode(@RequestParam String email, @RequestParam String message){
         return emailService.sendEmail(email,message);
     }
-//    @PostMapping("image") ResponseDto<Boolean> sendMessageSalesProduct(@RequestParam String email){
-//        return emailService.sendEmailWithImage(email);
-//    }
     @GetMapping
     ResponseDto<List<SalesDto>> getSales(){
         return salesClient.getSalesProductExp();
