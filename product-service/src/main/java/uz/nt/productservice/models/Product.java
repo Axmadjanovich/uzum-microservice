@@ -16,6 +16,8 @@ import java.util.List;
 @NamedQuery(query = "select p from Product p where coalesce(:id, id) = id " +
         "and coalesce(:name, name) = name " +
         "and coalesce(:price, price) = price " +
+        "and coalesce(:description, description) = description " +
+        "and coalesce(:categoryId, categoryId) = categoryId " +
         "and coalesce(:amount, amount) = amount", name = "findProductById")
 public class Product {
     @Id
