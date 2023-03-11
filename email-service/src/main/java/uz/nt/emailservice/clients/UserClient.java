@@ -10,6 +10,6 @@ import java.util.List;
 
 @FeignClient(name = "user-service")
 public interface UserClient {
-    @GetMapping("user/{id}")
-    ResponseDto<UsersDto> getEmail(@PathVariable Integer id);
+    @GetMapping("user")
+    ResponseDto<List<UsersDto>> getUsers();
 }

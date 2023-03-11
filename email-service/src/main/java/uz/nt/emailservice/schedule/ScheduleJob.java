@@ -16,14 +16,16 @@ import java.util.List;
 @Configuration
 @EnableAsync
 public class ScheduleJob {
-//    @Autowired
-//    UserClient userClient;
+    @Autowired
+    UserClient userClient;
     @Autowired
     EmailService emailService;
     @Transactional
-    @Scheduled(cron = "0 2 * * * *")
+    @Scheduled(cron = "0 0 9 * * *")
     public void sendEmailSaleProduct(){
-        //UsersDto users = userClient.getEmail(60).getData();
-        //emailService.sendEmailAboutSalesProduct(users.getEmail());
+        List<UsersDto> users = userClient.getUsers().getData();
+        if(!users.isEmpty()) {
+            users.stream().map(u->emailService.sendEmailAboutSalesProduct(u.getEmail()));
+        }
     }
 }

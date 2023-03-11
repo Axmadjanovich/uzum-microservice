@@ -33,20 +33,23 @@ public class EmailResources {
         return emailService.sendEmail(email,message);
     }
     @GetMapping
-    ResponseDto<List<SalesDto>> getSales(){
+    ResponseDto<List<SalesDto>> testSalesClient(){
         return salesClient.getSalesProductExp();
     }
-    @GetMapping("/{id}")
-    ResponseDto<UsersDto> getUser(@PathVariable Integer id){
-        return userClient.getEmail(60);
+    @GetMapping("/user")
+    ResponseDto<List<UsersDto>> testUserClient(){
+        return userClient.getUsers();
     }
     @GetMapping("pr")
-    ResponseDto<ProductDto> getEmail(@RequestParam Integer id){
-        //return emailService.sendEmailAboutSalesProduct(email);
+    ResponseDto<ProductDto> testProductClient(@RequestParam Integer id){
         return productClient.getProductById(id);
     }
     @GetMapping("file")
-    ResponseDto<byte[]> getImage(@RequestParam Integer id){
-        return fileClient.getFileBytes(id);
+    ResponseDto<byte[]> testFileClient(@RequestParam Integer fileId){
+        return fileClient.getFileBytes(fileId, "small");
+    }
+    @GetMapping("email")
+    ResponseDto<Boolean> testEmail(@RequestParam String email){
+        return emailService.sendEmailAboutSalesProduct(email);
     }
 }

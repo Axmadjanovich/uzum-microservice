@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "file-service")
 public interface FileClient {
     @GetMapping("file")
-    ResponseDto<byte[]> getFileBytes(@RequestParam Integer productId);
+    ResponseDto<byte[]> getFileBytes(@RequestParam Integer fileId, @RequestParam String size);
 }
