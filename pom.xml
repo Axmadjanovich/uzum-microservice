@@ -29,6 +29,7 @@
         <module>service-registry</module>
         <module>sales-service</module>
         <module>order-service</module>
+        <module>cloud-gateway</module>
     </modules>
     <dependencies>
         <dependency>
