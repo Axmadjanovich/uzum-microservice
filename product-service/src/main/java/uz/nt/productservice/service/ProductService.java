@@ -26,5 +26,7 @@ public interface ProductService {
 
     ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort);
 
+    ResponseDto<List<ProductDto>> getProductsForReport();
+
 //    ResponseDto<Page<ProductDto>> getExpensiveProducts();
 }

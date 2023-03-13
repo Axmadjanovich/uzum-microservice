@@ -19,6 +19,7 @@ import uz.nt.productservice.service.ProductService;
 import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.validator.ValidationService;
 import validator.AppStatusCodes;
+import validator.AppStatusMessages;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +27,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -199,6 +203,20 @@ public class ProductServiceImpl implements ProductService {
                 .data(products)
                 .success(true)
                 .message("OK")
+                .build();
+
+    }
+
+    @Override
+    public ResponseDto<List<ProductDto>> getProductsForReport() {
+        return ResponseDto.<List<ProductDto>>builder()
+                .data(productRepository.getAllByAmountLessThanEqual(200)
+                        .stream()
+                        .map(productMapper::toDto)
+                        .toList())
+                .message(AppStatusMessages.OK)
+                .code(AppStatusCodes.OK_CODE)
+                .success(true)
                 .build();
 
     }

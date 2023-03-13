@@ -4,13 +4,17 @@ import dto.ResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
+import uz.nt.productservice.clients.FileClient;
 import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.service.ProductService;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +34,7 @@ public class ProductResources {
     private final ProductService productService;
     private final Environment environment;
 
+    private final FileClient fileClient;
     @PostMapping(consumes = {"multipart/form-data", "application/json"})
     public ResponseDto<ProductDto> addNewProduct(@ModelAttribute ProductDto productDto) throws IOException {
         return productService.addNewProduct(productDto);
@@ -63,6 +68,12 @@ public class ProductResources {
     public ResponseDto<List<ProductDto>> getProducts(@RequestParam List<String> sort) {
         return productService.getAllProductsWithSort(sort);
     }
+
+    @GetMapping("report")
+    public ResponseDto<List<ProductDto>> getProductsForReport(){
+        return productService.getProductsForReport();
+    }
+
 //    @GetMapping("/expensive-by-category")
 //    public ResponseDto<Page<ProductDto>> getExpensiveProducts(){
 //        return productService.getExpensiveProducts();
