@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product/**
+#            - Header=X-API, user-products
+#        - id: cbu
+#          uri: https://cbu.uz/uz/arkhiv-kursov-valyut/json/
+#          predicates:
+#            - Method=GET
