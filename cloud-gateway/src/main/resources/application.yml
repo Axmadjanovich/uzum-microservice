@@ -6,6 +6,7 @@ spring:
           uri: http://localhost:9006/user/products
           predicates:
             - Header=X-API, user-products
+#            - Method=GET
         - id: cbu
           uri: https://cbu.uz/uz/arkhiv-kursov-valyut/json/
           predicates:
