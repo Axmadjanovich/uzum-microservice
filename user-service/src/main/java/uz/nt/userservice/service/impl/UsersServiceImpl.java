@@ -1,6 +1,6 @@
 package uz.nt.userservice.service.impl;
 
-import dto.ErrorDto;
+
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
@@ -169,8 +169,6 @@ public class UsersServiceImpl implements UsersService {
     public ResponseDto<Void> verify(String email, String code) {
         Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
         Optional<Users> userFromPSQL = usersRepository.findFirstByEmail(email);
-//        System.out.println(userFromRedis.get().getCode());
-//        System.out.println(code);
 
         if (userFromPSQL.isEmpty() && userFromRedis.isEmpty()) {
             return ResponseDto.<Void>builder()
