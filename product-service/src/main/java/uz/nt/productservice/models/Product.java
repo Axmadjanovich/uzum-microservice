@@ -13,10 +13,10 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@NamedQuery(query = "select p from Product p where coalesce(:id, id) = id " +
-        "and coalesce(:name, name) = name " +
-        "and coalesce(:price, price) = price " +
-        "and coalesce(:amount, amount) = amount", name = "findProductById")
+//@NamedQuery(query = "select p from Product p where coalesce(:id, id) = id " +
+//        "and coalesce(:name, name) = name " +
+//        "and coalesce(:price, price) = price " +
+//        "and coalesce(:amount, amount) = amount", name = "findProductById")
 public class Product {
     @Id
     @GeneratedValue(generator = "productIdSeq")
@@ -27,8 +27,11 @@ public class Product {
     private Integer amount;
     private String description;
     private Integer fileId;
-    private Integer categoryId;
+    @ManyToOne
+    private Category category;
     private Boolean isAvailable;
+    @ManyToOne
+    private Units units;
 }
 //1. Product qo'shish
 //2. Bor productni o'zgartirish
