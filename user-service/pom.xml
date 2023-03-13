@@ -45,6 +45,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+            <version>4.0.0</version>
+        </dependency>
         <dependency>
             <groupId>uz.nt</groupId>
             <artifactId>shared-libs</artifactId>
@@ -69,6 +75,11 @@
             <artifactId>spring-cloud-openfeign-core</artifactId>
             <version>4.0.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>4.0.1</version>
         </dependency>
     </dependencies>
 

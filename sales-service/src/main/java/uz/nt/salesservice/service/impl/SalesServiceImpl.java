@@ -13,8 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static uz.nt.salesservice.service.validator.AppStatusCodes.*;
-import static uz.nt.salesservice.service.validator.AppStatusMessages.*;
+import static validator.AppStatusCodes.*;
+import static validator.AppStatusMessages.*;
 
 
 @Service
