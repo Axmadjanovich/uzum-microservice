@@ -63,7 +63,7 @@ public class ProductRepositoryImpl {
             queryCondition.append(" AND p.id = :id ");
         }
         if (params.containsKey("categoryId")) {
-            queryCondition.append(" AND p.categoryId = :categoryId ");
+            queryCondition.append(" AND p.category.id = :categoryId ");
         }
         if (params.containsKey("name")) {
             queryCondition.append(" AND upper(p.name) like :name ");
@@ -77,7 +77,6 @@ public class ProductRepositoryImpl {
         if (params.containsKey("description")) {
             queryCondition.append(" AND upper(p.description) like :description");
         }
-        //...
     }
 
     private void setParams(Query query, Map<String, String> params) {
