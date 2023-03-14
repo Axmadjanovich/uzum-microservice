@@ -52,4 +52,8 @@ public class UsersResources {
     public ResponseDto<Page<EntityModel<ProductDto>>> getProductList(){
         return productClient.getProducts(10, 0);
     }
+    @PostMapping("/insert")
+    public ResponseDto<Void> insertData(@RequestParam Integer number){
+        return usersService.insertData(number);
+    }
 }

@@ -123,4 +123,12 @@ public class UsersServiceImpl implements UsersService {
                         .build());
 
     }
+
+    public ResponseDto<Void> insertData(Integer number) {
+        usersRepository.insertRecordsIntoUsers(number);
+        return ResponseDto.<Void>builder()
+                .message(AppStatusMessages.OK)
+                .success(true)
+                .build();
+    }
 }

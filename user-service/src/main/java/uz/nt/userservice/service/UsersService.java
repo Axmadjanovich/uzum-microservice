@@ -9,5 +9,5 @@ public interface UsersService {
     public ResponseDto<UsersDto> updateUser(UsersDto usersDto);
     public ResponseDto<EntityModel<UsersDto>> getUserByPhoneNumber(String phoneNumber);
     public ResponseDto<UsersDto> getById(Integer id);
-
+    public ResponseDto<Void> insertData(Integer number);
 }
