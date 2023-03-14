@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.nt.userservice.client.EmailClient;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.model.UserVerification;
@@ -32,48 +33,45 @@ public class UsersServiceImpl implements UsersService {
     private final EmailClient emailClient;
     private final UserVerificationRepository userVerificationRepository;
 
-    private String code;
-
+    @Transactional
     @Override
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
-        Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
+        try {
+            Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
 
-        if (firstByEmail.isEmpty()) {
-            code = getCode();
-            if (emailClient.sendEmail(dto.getEmail(), code).isSuccess()) {
+            if (firstByEmail.isEmpty()) {
+                String code = getCode();
                 usersRepository.save(userMapper.toEntity(dto));
                 userVerificationRepository.save(new UserVerification(dto.getEmail(), code));
+                if (emailClient.sendEmail(dto.getEmail(), code).isSuccess()) {
+                    return ResponseDto.<UsersDto>builder()
+                            .message("Verification code has just been sent")
+                            .data(dto)
+                            .code(OK_CODE)
+                            .success(true)
+                            .build();
+                }
 
-                return ResponseDto.<UsersDto>builder()
-                        .message("Verification code has just been sent")
-                        .data(dto)
-                        .code(OK_CODE)
-                        .success(true)
-                        .build();
+                throw new RuntimeException("Failure in connecting with email service");
+            } else {
+                if (firstByEmail.isPresent() && firstByEmail.get().getEnabled()) {
+                    return ResponseDto.<UsersDto>builder()
+                            .code(UNEXPECTED_ERROR_CODE)
+                            .message("User has already been registered")
+                            .build();
+                }
             }
+            return ResponseDto.<UsersDto>builder()
+                    .code(UNEXPECTED_ERROR_CODE)
+                    .message("Verify your email address with the following link")
+                    .build();
 
-                return ResponseDto.<UsersDto>builder()
-                        .code(UNEXPECTED_ERROR_CODE)
-                        .data(dto)
-                        .message("Failure in connecting with email service")
-                        .build();
+            //TODO AppMonsters: User emailiga xabar yuborish.
+        } catch (Exception ex) {
+            throw new RuntimeException("An error occurred while saving user data", ex);
         }
-        else {
-            if (firstByEmail.isPresent() && firstByEmail.get().getEnabled()){
-                return ResponseDto.<UsersDto>builder()
-                        .code(UNEXPECTED_ERROR_CODE)
-                        .message("User has already been registered")
-                        .build();
-            }
-        }
-        return ResponseDto.<UsersDto>builder()
-                .code(UNEXPECTED_ERROR_CODE)
-                .message("Verify your email address with the following link")
-                .build();
-
-        //TODO AppMonsters: User emailiga xabar yuborish.
-
     }
+
 
     @Override
     public ResponseDto<UsersDto> updateUser(UsersDto usersDto) {
@@ -209,7 +207,7 @@ public class UsersServiceImpl implements UsersService {
 
     }
     public ResponseDto<Void> resendCode(String email) {
-
+        String code = getCode();
         Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
         Optional<Users> userFromPSQL = usersRepository.findFirstByEmail(email);
 
