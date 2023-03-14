@@ -1,6 +1,7 @@
 package uz.nt.salesservice.service.impl;
 
 import dto.ResponseDto;
+import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.nt.salesservice.dto.SalesDto;
@@ -177,7 +178,7 @@ public class SalesServiceImpl implements SalesService {
                     .data(salesMapper.toDto(sales))
                     .success(true)
                     .build();
-        }catch (Exception e){
+        }catch (RuntimeException e){
             return ResponseDto.<SalesDto>builder()
                     .message(DATABASE_ERROR + ": " + e.getMessage())
                     .code(DATABASE_ERROR_CODE)
