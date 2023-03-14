@@ -10,7 +10,8 @@ import java.util.List;
 public interface SalesService {
     ResponseDto<SalesDto> addSales(SalesDto salesDto);
 
-    ResponseDto<List<SalesDto>> getAllSales();
+//    ResponseDto<List<SalesDto>> getAllSales();
+    ResponseDto<Page<EntityModel<SalesDto>>> getAllSales(Integer page, Integer size);
 
     ResponseDto<SalesDto> getById(Integer id);
 

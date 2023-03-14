@@ -1,12 +1,18 @@
 package uz.nt.salesservice.service.impl;
 
 import dto.ResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import uz.nt.salesservice.dto.SalesDto;
 import uz.nt.salesservice.model.Sales;
 import uz.nt.salesservice.repository.SalesRepository;
+import uz.nt.salesservice.rest.SalesResources;
 import uz.nt.salesservice.service.SalesService;
 import uz.nt.salesservice.service.mapper.SalesMapper;
 
@@ -20,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static validator.AppStatusCodes.*;
 import static validator.AppStatusMessages.*;
 
@@ -39,49 +46,49 @@ public class SalesServiceImpl implements SalesService {
                 .build();
     }
 
-    @Override
-    public ResponseDto<List<SalesDto>> getAllSales() {
-        return ResponseDto.<List<SalesDto>>builder()
-                .data(salesRepository.findAll().stream().map(salesMapper::toDto).toList())
-                .code(OK_CODE)
-                .message(OK)
-                .success(true)
-                .build();
-    }
-
 //    @Override
-//    public ResponseDto<Page<EntityModel<SalesDto>>> geAllSales(Integer page, Integer size) {
-//        long count = salesRepository.count();
-//
-//        PageRequest pageRequest = PageRequest.of(
-//                (count / size) <= page ?
-//                        (count % size == 0 ? (int) (count / size) - 1
-//                                : (int) (count / size))
-//                        : page,
-//                size,
-//                Sort.by("expressionDate").descending()
-//        );
-//        Page<EntityModel<SalesDto>> salesDto = salesRepository.findAll(pageRequest)
-//                .map(s -> {
-//                    EntityModel<SalesDto> entityModel = EntityModel.of(salesMapper.toDto(s));
-//                    try{
-//                        entityModel.add(linkTo(SalesRepository.class
-//                                .getDeclaredMethod("getBYId", Integer.class, HttpServletRequest.class))
-//                                .withSelfRel()
-//                                .expand());
-//                    } catch (NoSuchMethodException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    return entityModel;
-//                });
-//
+//    public ResponseDto<List<SalesDto>> getAllSales() {
 //        return ResponseDto.<List<SalesDto>>builder()
-//                .message(OK)
+//                .data(salesRepository.findAll().stream().map(salesMapper::toDto).toList())
 //                .code(OK_CODE)
+//                .message(OK)
 //                .success(true)
-//                .data(salesDto)
 //                .build();
 //    }
+
+    @Override
+    public ResponseDto<Page<EntityModel<SalesDto>>> getAllSales(Integer page, Integer size) {
+        long count = salesRepository.count();
+
+        PageRequest pageRequest = PageRequest.of(
+                (count / size) <= page ?
+                        (count % size == 0 ? (int) (count / size) - 1
+                                : (int) (count / size))
+                        : page,
+                size,
+                Sort.by("expirationDate").descending()
+        );
+        Page<EntityModel<SalesDto>> salesDto = salesRepository.findAll(pageRequest)
+                .map(s -> {
+                    EntityModel<SalesDto> entityModel = EntityModel.of(salesMapper.toDto(s));
+                    try{
+                        entityModel.add(linkTo(SalesResources.class
+                                .getDeclaredMethod("getById", Integer.class))
+                                .withSelfRel()
+                                .expand(s.getId()));
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return entityModel;
+                });
+
+        return ResponseDto.<Page<EntityModel<SalesDto>>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .success(true)
+                .data(salesDto)
+                .build();
+    }
 
     @Override
     public ResponseDto<SalesDto> getById(Integer id) {

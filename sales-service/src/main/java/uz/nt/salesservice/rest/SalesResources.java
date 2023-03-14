@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.salesservice.dto.SalesDto;
 import uz.nt.salesservice.service.SalesService;
@@ -57,9 +59,15 @@ public class SalesResources {
             responses = {@ApiResponse(responseCode = "200", description = "OK"),
                     @ApiResponse(responseCode = "404", description = "Sales not found")}
     )
+//    @GetMapping("/all")
+//    public ResponseDto<List<SalesDto>> getAllSales(){
+//        return salesService.getAllSales();
+//    }
+
     @GetMapping("/all")
-    public ResponseDto<List<SalesDto>> getAllSales(){
-        return salesService.getAllSales();
+    public ResponseDto<Page<EntityModel<SalesDto>>> getAllSales(@RequestParam(defaultValue = "10") Integer size,
+                                                                @RequestParam(defaultValue = "0") Integer page){
+        return salesService.getAllSales(page, size);
     }
     @Operation(
             method = "Get all expired one day Sales",
