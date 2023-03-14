@@ -112,6 +112,7 @@ public class FileServiceImpl implements Fileservices {
             }
         });
 
+        executorService.shutdown();
 
         try {
             File savedFile = fileRepository.save(fileEntity);
