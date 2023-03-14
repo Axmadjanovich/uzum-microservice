@@ -62,7 +62,6 @@ public class UnitServiceImpl implements UnitService {
                     .build();
         }
         Units units = optionalUnits.get();
-        units.setId(dto.getId());
         if (dto.getName() != null){
             units.setName(dto.getName());
         }
@@ -92,24 +91,35 @@ public class UnitServiceImpl implements UnitService {
 
     @Override
     public ResponseDto<UnitDto> deleteUnit(Integer id) {
-        Optional<Units> optionalUser = unitRepository.findById(id);
-
-        if(optionalUser.isEmpty()){
-            return ResponseDto.<UnitDto>builder()
-                    .message(NOT_FOUND)
-                    .code(NOT_FOUND_ERROR_CODE)
-                    .success(false)
+        return unitRepository.findById(id).map(units -> {
+             unitRepository.delete(units);
+             return ResponseDto.<UnitDto>builder()
+                    .code(OK_CODE)
+                    .message("Unit with ID " + id + " is deleted")
+                    .success(true)
+                    .data(unitMapper.toDto(units))
                     .build();
-        }
+        }).orElse(
+                ResponseDto.<UnitDto>builder()
+                        .code(NOT_FOUND_ERROR_CODE)
+                        .message(NOT_FOUND)
+                        .success(false)
+                        .build());
+    }
 
-        Units users = optionalUser.get();
-
-        unitRepository.deleteById(id);
-
-        return ResponseDto.<UnitDto>builder()
-                .message("User with ID " + id + " is deleted")
-                .code(OK_CODE)
-                .data(unitMapper.toDto(users))
-                .build();
+    @Override
+    public ResponseDto<UnitDto> getById(Integer id) {
+        return unitRepository.findById(id).map(u -> ResponseDto.<UnitDto>builder()
+               .code(OK_CODE)
+               .message(OK)
+               .success(true)
+               .data(unitMapper.toDto(u))
+               .build()).orElse(
+                ResponseDto.<UnitDto>builder()
+                        .code(NOT_FOUND_ERROR_CODE)
+                        .message(NOT_FOUND)
+                        .success(false)
+                        .build()
+        );
     }
 }

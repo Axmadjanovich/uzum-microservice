@@ -31,4 +31,8 @@ public class UnitResources {
     public ResponseDto<UnitDto> deleteUnit(@RequestParam  Integer id){
         return unitService.deleteUnit(id);
     }
+    @GetMapping("by-id")
+    public ResponseDto<UnitDto> getById(@RequestParam Integer id){
+        return unitService.getById(id);
+    }
 }
