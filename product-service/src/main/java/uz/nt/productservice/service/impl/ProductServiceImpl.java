@@ -30,8 +30,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static validator.AppStatusCodes.*;
 import static validator.AppStatusMessages.*;
 
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -194,7 +192,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort) {
+public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort) {
         List<Sort.Order> orderList = sort.stream().map(s -> new Sort.Order(Sort.Direction.DESC,s)).toList();
 
         List<ProductDto> products = productRepository.findAll(Sort.by(orderList))
@@ -209,21 +207,9 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
-//    @Override
-//    public ResponseDto<Page<ProductDto>> getExpensiveProducts() {
-//        Page<ProductDto> products = productRepository.getExpensiveProducts2().map(productMapper::toDto);
-//
-//
-//        return ResponseDto.<Page<ProductDto>>builder()
-//                .data(products)
-//                .message("OK")
-//                .success(true)
-//                .build();
-//    }
-
     @Override
     public ResponseDto<List<ProductDto>> getExpensiveProducts(){
-        List<ProductDto> products = productRepository.getExpensiveProducts1().stream()
+        List<ProductDto> products = productRepository.getExpensiveProducts().stream()
                 .map(productMapper::toDto)
                 .toList();
 

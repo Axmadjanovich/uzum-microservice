@@ -6,17 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-//@NamedQuery(query = "select p from Product p where coalesce(:id, id) = id " +
-//        "and coalesce(:name, name) = name " +
-//        "and coalesce(:price, price) = price " +
-//        "and coalesce(:amount, amount) = amount", name = "findProductById")
+@NamedQuery(query = "select p from Product p where coalesce(:id, id) = id " +
+        "and coalesce(:name, name) = name " +
+        "and coalesce(:price, price) = price " +
+        "and coalesce(:description, description) = description " +
+        "and coalesce(:categoryId, category.id) = category.id " +
+        "and coalesce(:amount, amount) = amount", name = "findProductById")
 public class Product {
     @Id
     @GeneratedValue(generator = "productIdSeq")
@@ -33,6 +33,3 @@ public class Product {
     @ManyToOne
     private Units units;
 }
-//1. Product qo'shish
-//2. Bor productni o'zgartirish
-//3. Umumiy productlar ro'yxatini qaytarish

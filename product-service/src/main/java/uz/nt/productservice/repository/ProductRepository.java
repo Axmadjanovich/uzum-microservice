@@ -12,17 +12,9 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> getAllByAmountLessThanEqual(int amount);
 
-    @Query(value = "select t from Product t where (t.category.id, t.price) in (select p.category.id, max(p.price) from Product p\n" +
-            "group by p.category.id)")
-    List<Product> getExpensiveProducts2();
-
     @Query(value = "select * from product t where (t.category_id, t.price) in (select p.category_id, max(p.price) from product p\n" +
             "group by p.category_id)",
             nativeQuery = true)
-    List<Product> getExpensiveProducts1();
+    List<Product> getExpensiveProducts();
 
-    @Query(value = "select * from product t where (t.category_id, t.price) in (select p.category_id, max(p.price) from product p\n" +
-            "group by p.category_id)",
-            nativeQuery = true)
-    Page<ProductDto> getExpensiveProducts(Pageable pageable);
 }

@@ -20,8 +20,6 @@ public interface ProductService {
 
     ResponseDto<ProductDto> getProductById(Integer id);
 
-//    ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort);
-
     ResponseDto<Page<ProductDto>> universalSearch2(Map<String, String> params);
 
     ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort);

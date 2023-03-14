@@ -15,7 +15,7 @@ import static validator.AppStatusMessages.SIZE_MISMATCH;
 @NoArgsConstructor
 public class UnitDto {
     private Integer id;
-    @NotBlank(message = EMPTY_STRING)
+@NotBlank(message = EMPTY_STRING)
     private String shortName;
     @NotBlank(message = EMPTY_STRING)
     private String name;

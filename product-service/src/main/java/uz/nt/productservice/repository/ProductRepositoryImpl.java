@@ -77,14 +77,12 @@ public class ProductRepositoryImpl {
         if (params.containsKey("description")) {
             queryCondition.append(" AND upper(p.description) like :description");
         }
-        //...
     }
 
     private void setParams(Query query, Map<String, String> params) {
         if (params.containsKey("id")) {
             query.setParameter("id", Integer.parseInt(params.get("id")));
         }
-
         if (params.containsKey("categoryId")) {
             query.setParameter("categoryId", Integer.parseInt(params.get("categoryId")));
         }
