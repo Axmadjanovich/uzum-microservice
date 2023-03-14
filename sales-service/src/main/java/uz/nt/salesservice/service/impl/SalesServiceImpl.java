@@ -179,10 +179,7 @@ public class SalesServiceImpl implements SalesService {
                     .success(true)
                     .build();
         }catch (RuntimeException e){
-            return ResponseDto.<SalesDto>builder()
-                    .message(DATABASE_ERROR + ": " + e.getMessage())
-                    .code(DATABASE_ERROR_CODE)
-                    .build();
+            throw new RuntimeException("Data is not saved "+e.getMessage());
         }
     }
 
