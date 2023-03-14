@@ -8,9 +8,14 @@ import uz.nt.productservice.dto.ProductDto;
 import uz.nt.productservice.models.Product;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-    List<Product> getAllByAmountLessThanEqual(int amount);
+
+    @Query(value = "select p from Product p where p.amount < p.indicator")
+    List<Product> getProductsWithLessAmount();
+
+
 
     @Query(value = "select t from Product t where (t.category.id, t.price) in (select p.category.id, max(p.price) from Product p\n" +
             "group by p.category.id)")
@@ -25,4 +30,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "group by p.category_id)",
             nativeQuery = true)
     Page<ProductDto> getExpensiveProducts(Pageable pageable);
+
 }

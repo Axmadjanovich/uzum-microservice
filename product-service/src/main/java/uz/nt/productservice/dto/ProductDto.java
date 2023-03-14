@@ -20,4 +20,6 @@ public class ProductDto {
     private MultipartFile image;
     private Boolean isAvailable;
     private UnitDto units;
+    private Integer indicator;
+
 }

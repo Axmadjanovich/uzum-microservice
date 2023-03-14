@@ -14,6 +14,7 @@ import uz.nt.productservice.service.ProductService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 //TODO Coders: miqdori 10 dan kam bo'lgan mahsulotlarni listini qaytarish
 
@@ -64,14 +65,21 @@ public class ProductResources {
     public ResponseDto<List<ProductDto>> getProducts(@RequestParam List<String> sort) {
         return productService.getAllProductsWithSort(sort);
     }
-//    @GetMapping("/expensive-by-category")
-//    public ResponseDto<Page<ProductDto>> getExpensiveProducts(){
-//        return productService.getExpensiveProducts();
-//    }
 
     @GetMapping("/expensive-by-category")
     public ResponseDto<List<ProductDto>> getExpensiveProducts(){
         return productService.getExpensiveProducts();
+    }
+
+    @GetMapping("for-sales")
+    public ResponseDto<Stream<ProductDto>> getProductsForSales(@RequestParam List<Integer> salesList){
+//        List<Integer> list = List.of(1,2,3,4,5,6,7,8,9,10,11,12,13);
+        return productService.getProductsForSales(salesList);
+    }
+
+    @GetMapping("product-with-less-amount")
+    public ResponseDto<Stream<ProductDto>> getAllProductsWithLessAmount(){
+        return productService.getAllProductsWithLessAmount();
     }
 
 }

@@ -69,6 +69,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseDto<CategoryDto> getAll() {
+
+        List<CategoryDto> categoryDto = categoryRepository.findAll().stream().map(categoryMapper::toDto).toList();
+
         List<Category> categoryList = categoryRepository.findAll();
         return ResponseDto.<CategoryDto>builder()
                 .message("OK")
