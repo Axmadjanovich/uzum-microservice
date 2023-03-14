@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import uz.nt.fileservice.exceptions.ExcelWriterException;
+import uz.nt.fileservice.exceptions.FileConvertingException;
 import uz.nt.fileservice.model.File;
 import uz.nt.fileservice.repository.FileRepository;
 import uz.nt.fileservice.service.Fileservices;
@@ -22,9 +24,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 @Slf4j
@@ -35,8 +42,8 @@ public class FileServiceImpl implements Fileservices {
 
     private final ExcelWriter excelWriter;
 
-    public static String filePath(String folder, String ext, boolean uuidActive) {
-        java.io.File file = new java.io.File("upload"+ "/" + folder + "/");
+    public String filePath(String folder, String ext, boolean uuidActive) {
+        java.io.File file = new java.io.File("upload" + "/" + folder + "/");
         if (!file.exists()) {
             file.mkdirs();
         }
@@ -53,14 +60,16 @@ public class FileServiceImpl implements Fileservices {
     public void reportProducts(List<ProductDto> productDtoList) throws IOException {
 
         FileOutputStream outputStream = new FileOutputStream(filePath("product-report", ".xlsx", false));
-
-        excelWriter.writeHeaderLine();
-        excelWriter.writeDataLines(productDtoList);
-        excelWriter.workbook.write(outputStream);
-        outputStream.flush();
-        outputStream.close();
-        excelWriter.workbook.close();
-
+        try {
+            excelWriter.writeHeaderLine();
+            excelWriter.writeDataLines(productDtoList);
+            excelWriter.workbook.write(outputStream);
+            outputStream.flush();
+            outputStream.close();
+            excelWriter.workbook.close();
+        } catch (Exception e) {
+            throw new ExcelWriterException(e.getMessage());
+        }
     }
 
     @Override
@@ -69,17 +78,55 @@ public class FileServiceImpl implements Fileservices {
         fileEntity.setExt(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
         fileEntity.setCreatedAt(LocalDateTime.now());
 
-        fileEntity.setPathlarge(saveLargeSize(file, fileEntity.getExt()));
-        fileEntity.setPathmedium(saveMediumSize(file, fileEntity.getExt()));
-        fileEntity.setPathsmall(saveSmallSize(file, fileEntity.getExt()));
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+        List<Future<String>> futures = null;
+        try {
+            futures = executorService.invokeAll(
+                    Arrays.asList(
+                            () -> saveLargeSize(file, fileEntity.getExt()),
+                            () -> saveMediumSize(file, fileEntity.getExt()),
+                            () -> saveSmallSize(file, fileEntity.getExt())
+                    )
+            );
+        } catch (InterruptedException e) {
+            throw new FileConvertingException("File converting exception: " + e.getMessage());
+        }
 
-        File savedFile = fileRepository.save(fileEntity);
+        if (futures == null) {
+            throw new FileConvertingException("Could not convert file");
+        }
 
-        return ResponseDto.<Integer>builder()
-                .data(savedFile.getId())
-                .message("OK")
-                .success(true)
-                .build();
+        futures.stream().map(result -> {
+            try {
+                return result.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new FileConvertingException(e.getMessage());
+            }
+        }).forEach(r -> {
+            if (r.substring(14, 19).equalsIgnoreCase("LARGE")) {
+                fileEntity.setPathLarge(r);
+            } else if (r.substring(14, 20).equalsIgnoreCase("MEDIUM")) {
+                fileEntity.setPathMedium(r);
+            } else if (r.substring(14, 19).equalsIgnoreCase("SMALL")) {
+                fileEntity.setPathSmall(r);
+            }
+        });
+
+
+        try {
+            File savedFile = fileRepository.save(fileEntity);
+
+            return ResponseDto.<Integer>builder()
+                    .data(savedFile.getId())
+                    .message("OK")
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ResponseDto.<Integer>builder()
+                    .code(AppStatusCodes.DATABASE_ERROR_CODE)
+                    .message(AppStatusMessages.DATABASE_ERROR + ": " + e.getMessage())
+                    .build();
+        }
 
     }
 
@@ -137,7 +184,7 @@ public class FileServiceImpl implements Fileservices {
                     .code(AppStatusCodes.VALIDATION_ERROR_CODE)
                     .build();
         }
-        FileInputStream image = null;
+        String imagePath = "";
 
         Optional<File> optional = fileRepository.findById(fileId);
 
@@ -147,21 +194,18 @@ public class FileServiceImpl implements Fileservices {
                     .code(AppStatusCodes.NOT_FOUND_ERROR_CODE)
                     .build();
         }
-        if (size.toUpperCase().equals("LARGE")){
-            String pathlarge = optional.get().getPathlarge();
-             image = new FileInputStream(pathlarge);
+
+        if (size.equalsIgnoreCase("LARGE")) {
+            imagePath = optional.get().getPathLarge();
         }
-        if (size.toUpperCase().equals("MEDIUM")) {
-            String pathmedium = optional.get().getPathmedium();
-             image = new FileInputStream(pathmedium);
+        if (size.equalsIgnoreCase("MEDIUM")) {
+            imagePath = optional.get().getPathMedium();
         }
-        if (size.toUpperCase().equals("SMALL")) {
-            String pathsmall = optional.get().getPathsmall();
-             image = new FileInputStream(pathsmall);
+        if (size.equalsIgnoreCase("SMALL")) {
+            imagePath = optional.get().getPathSmall();
         }
 
-
-        byte[] file = image.readAllBytes();
+        byte[] file = new FileInputStream(imagePath).readAllBytes();
 
         return ResponseDto.<byte[]>builder()
                 .message(AppStatusMessages.OK)

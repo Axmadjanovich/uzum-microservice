@@ -17,9 +17,9 @@ public class File {
     @GeneratedValue(generator = "file_id_seq")
     @SequenceGenerator(name = "file_id_seq", sequenceName = "file_id_seq", allocationSize = 1)
     private Integer id;
-    private String pathlarge;
-    private String pathmedium;
-    private String pathsmall;
+    private String pathLarge;
+    private String pathMedium;
+    private String pathSmall;
     private String ext;
     private LocalDateTime createdAt;
 }

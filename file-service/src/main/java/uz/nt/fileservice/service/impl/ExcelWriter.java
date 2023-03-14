@@ -7,13 +7,16 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 import uz.nt.productservice.dto.ProductDto;
 
 
 import java.io.IOException;
 import java.util.List;
 
-@Configuration
+@Component
+@RequestScope
 public class ExcelWriter {
 
     public XSSFWorkbook workbook = new XSSFWorkbook();
