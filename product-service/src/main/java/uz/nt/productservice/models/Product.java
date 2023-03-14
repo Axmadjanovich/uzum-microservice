@@ -16,6 +16,7 @@ import lombok.Setter;
         "and coalesce(:price, price) = price " +
         "and coalesce(:description, description) = description " +
         "and coalesce(:categoryId, category.id) = category.id " +
+        "and coalesce(:unitId, units.id) = units.id " +
         "and coalesce(:amount, amount) = amount", name = "findProductById")
 public class Product {
     @Id
