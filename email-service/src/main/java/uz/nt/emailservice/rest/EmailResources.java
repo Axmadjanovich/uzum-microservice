@@ -19,7 +19,7 @@ public class EmailResources {
 
     private final EmailService emailService;
     @PostMapping
-    public ResponseDto<Boolean> sendMessage(@RequestParam String email, String message){
+    public ResponseDto<Boolean> sendMessage(@RequestParam String email, @RequestParam String message){
         return emailService.sendEmail(email,message);
     }
 }
