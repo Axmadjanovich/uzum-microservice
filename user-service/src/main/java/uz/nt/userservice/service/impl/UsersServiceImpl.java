@@ -53,14 +53,15 @@ public class UsersServiceImpl implements UsersService {
                 }
 
                 throw new RuntimeException("Failure in connecting with email service");
-            } else {
-                if (firstByEmail.isPresent() && firstByEmail.get().getEnabled()) {
-                    return ResponseDto.<UsersDto>builder()
-                            .code(UNEXPECTED_ERROR_CODE)
-                            .message("User has already been registered")
-                            .build();
-                }
             }
+
+            if (firstByEmail.get().getEnabled()) {
+                return ResponseDto.<UsersDto>builder()
+                        .code(UNEXPECTED_ERROR_CODE)
+                        .message("User has already been registered")
+                        .build();
+            }
+
             return ResponseDto.<UsersDto>builder()
                     .code(UNEXPECTED_ERROR_CODE)
                     .message("Verify your email address with the following link")
@@ -206,6 +207,7 @@ public class UsersServiceImpl implements UsersService {
                 .build();
 
     }
+
     public ResponseDto<Void> resendCode(String email) {
         String code = getCode();
         Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
