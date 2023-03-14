@@ -17,7 +17,7 @@ import lombok.Setter;
         "and coalesce(:price, price) = price " +
         "and coalesce(:amount, amount) = amount " +
         "and coalesce(:description, description) = description " +
-        "and coalesce(:categoryId, categoryId) = categoryId ", name = "findProductById")
+        "and coalesce(:categoryId, category.id) = category.id ", name = "findProductById")
 public class Product {
     @Id
     @GeneratedValue(generator = "productIdSeq")

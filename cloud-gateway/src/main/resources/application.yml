@@ -2,12 +2,25 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: user-products
-          uri: http://localhost:9006/user/products
+        - id: user-service
+          uri: lb://USER-SERVICE
           predicates:
-            - Header=X-API, user-products
+            - Path=/user/
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product/
+
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: user-products
+#          uri: http://localhost:9006/user/products
+#          predicates:
+#            - Header=X-API, user-products
+##            - Method=GET
+#        - id: cbu
+#          uri: https://cbu.uz/uz/arkhiv-kursov-valyut/json/
+#          predicates:
 #            - Method=GET
-        - id: cbu
-          uri: https://cbu.uz/uz/arkhiv-kursov-valyut/json/
-          predicates:
-            - Method=GET
