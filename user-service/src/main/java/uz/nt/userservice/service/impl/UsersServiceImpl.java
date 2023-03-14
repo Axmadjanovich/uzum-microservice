@@ -71,7 +71,7 @@ public class UsersServiceImpl implements UsersService {
                     .build();
 
         }catch (RuntimeException e){
-            throw new RuntimeException("Don't saved to database");
+            throw new RuntimeException(e.getMessage());
         }
 
 
