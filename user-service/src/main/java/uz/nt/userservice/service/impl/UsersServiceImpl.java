@@ -37,6 +37,8 @@ public class UsersServiceImpl implements UsersService {
     @Transactional
     @Override
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
+        try {
+
 
             Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
 
@@ -51,7 +53,7 @@ public class UsersServiceImpl implements UsersService {
                             .code(OK_CODE)
                             .success(true)
                             .build();
-                }else{
+                } else {
                     throw new RuntimeException("Failure in connecting with email service");
                 }
 
@@ -68,7 +70,9 @@ public class UsersServiceImpl implements UsersService {
                     .message("Verify your email address with the following link")
                     .build();
 
-
+        }catch (RuntimeException e){
+            throw new RuntimeException("Don't saved to database");
+        }
 
 
     }
