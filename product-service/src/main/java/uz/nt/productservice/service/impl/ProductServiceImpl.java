@@ -210,7 +210,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseDto<List<ProductDto>> getExpensiveProducts(){
-        List<ProductDto> products = productRepository.getExpensiveProducts1().stream()
+        List<ProductDto> products = productRepository.getExpensiveProducts().stream()
                 .map(productMapper::toDto)
                 .toList();
 
