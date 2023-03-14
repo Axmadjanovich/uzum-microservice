@@ -9,6 +9,12 @@ import uz.nt.salesservice.repository.SalesRepository;
 import uz.nt.salesservice.service.SalesService;
 import uz.nt.salesservice.service.mapper.SalesMapper;
 
+import java.sql.SQLDataException;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLTimeoutException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +26,10 @@ import static validator.AppStatusMessages.*;
 @Service
 @RequiredArgsConstructor
 public class SalesServiceImpl implements SalesService {
-
     private final SalesMapper salesMapper;
     private final SalesRepository salesRepository;
     @Override
     public ResponseDto<SalesDto> addSales(SalesDto salesDto) {
-
         return ResponseDto.<SalesDto>builder()
                 .code(OK_CODE)
                 .success(true)
@@ -38,6 +42,9 @@ public class SalesServiceImpl implements SalesService {
     public ResponseDto<List<SalesDto>> getAllSales() {
         return ResponseDto.<List<SalesDto>>builder()
                 .data(salesRepository.findAll().stream().map(salesMapper::toDto).toList())
+                .code(OK_CODE)
+                .message(OK)
+                .success(true)
                 .build();
     }
 
@@ -93,7 +100,9 @@ public class SalesServiceImpl implements SalesService {
     @Override
     public ResponseDto<SalesDto> deleteById(Integer id) {
         Optional<Sales> sales = salesRepository.findFirstById(id);
-        salesRepository.deleteById(id);
+        if(sales.isPresent()){
+            salesRepository.deleteById(id);
+        }
         return sales.map(
                 s -> ResponseDto.<SalesDto>builder()
                             .code(OK_CODE)
@@ -109,13 +118,19 @@ public class SalesServiceImpl implements SalesService {
 
     @Override
     public ResponseDto<List<SalesDto>> deleteAll() {
-        List<Sales> salesList = salesRepository.findAll().stream().toList();
+        List<Sales> all = salesRepository.findAll();
+        if(all.isEmpty()){
+            return ResponseDto.<List<SalesDto>>builder()
+                    .message("Sales is empty")
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .build();
+        }
         salesRepository.deleteAll();
         return ResponseDto.<List<SalesDto>>builder()
                 .message(OK)
                 .code(OK_CODE)
                 .success(true)
-                .data(salesList.stream().map(salesMapper::toDto).toList())
+                .data(all.stream().map(salesMapper::toDto).toList())
                 .build();
     }
 
@@ -141,7 +156,9 @@ public class SalesServiceImpl implements SalesService {
         Sales sales = salesOptional.get();
 
         if(salesDto.getExpirationDate() != null){
-            sales.setExpirationDate(salesDto.getExpirationDate());
+            sales.setExpirationDate(
+                    LocalDateTime.parse(salesDto.getExpirationDate(),
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
         if(salesDto.getPrice() != null){
             sales.setPrice(salesDto.getPrice());
@@ -170,9 +187,9 @@ public class SalesServiceImpl implements SalesService {
 
     @Override
     public ResponseDto<List<SalesDto>> getExpiredOneDay() {
-        Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+        LocalDateTime localDateTime = LocalDateTime.now();
         return ResponseDto.<List<SalesDto>>builder()
-                .data(salesRepository.findAllByExpirationDateIsBefore(date).stream().map(salesMapper::toDto).toList())
+                .data(salesRepository.findAllByExpirationDateIsBefore(localDateTime).stream().map(salesMapper::toDto).toList())
                 .build();
     }
 }

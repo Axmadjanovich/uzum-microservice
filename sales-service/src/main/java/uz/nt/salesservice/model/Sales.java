@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -27,6 +27,6 @@ public class Sales {
 
     private Integer price;
 
-    private Date expirationDate;
+    private LocalDateTime expirationDate;
 
 }

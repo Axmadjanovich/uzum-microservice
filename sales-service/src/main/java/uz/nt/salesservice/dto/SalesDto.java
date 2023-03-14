@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,6 +22,6 @@ public class SalesDto {
     @NotNull
     private Integer price;
 
-    @NotNull
-    private Date expirationDate;
+    @NotNull(message = "Example: yyyy-MM-dd HH:mm:ss")
+    private String expirationDate;
 }

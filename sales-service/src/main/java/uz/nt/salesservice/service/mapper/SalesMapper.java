@@ -8,8 +8,10 @@ import uz.nt.salesservice.model.Sales;
 @Mapper(componentModel = "spring")
 public interface SalesMapper {
 
+    @Mapping(target = "expirationDate", dateFormat = "yyyy-MM-dd HH:mm:ss")
     SalesDto toDto(Sales sales);
 
+    @Mapping(target = "expirationDate", dateFormat = "yyyy-MM-dd HH:mm:ss")
     Sales toEntity(SalesDto dto);
 
 }
