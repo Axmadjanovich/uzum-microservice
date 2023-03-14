@@ -1,5 +1,6 @@
 package uz.nt.productservice.service;
 
+
 import dto.ResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
@@ -26,4 +27,6 @@ public interface ProductService {
     ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort);
 
 //    ResponseDto<Page<ProductDto>> getExpensiveProducts();
+    ResponseDto<List<ProductDto>> getExpensiveProducts();
+
 }

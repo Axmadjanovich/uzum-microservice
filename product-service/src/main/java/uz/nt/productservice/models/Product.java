@@ -28,7 +28,10 @@ public class Product {
     private Integer amount;
     private String description;
     private Integer fileId;
-    private Integer categoryId;
+    @ManyToOne
+    private Category category;
     private Boolean isAvailable;
+    @ManyToOne
+    private Units units;
 }
 

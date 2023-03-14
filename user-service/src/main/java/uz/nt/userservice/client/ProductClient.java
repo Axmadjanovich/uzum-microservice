@@ -1,12 +1,12 @@
 package uz.nt.userservice.client;
 
+import dto.ProductDto;
 import dto.ResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import uz.nt.productservice.dto.ProductDto;
 
 @FeignClient("product-service")
 public interface ProductClient {
