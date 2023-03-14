@@ -92,25 +92,23 @@ public class FileServiceImpl implements Fileservices {
             throw new FileConvertingException("File converting exception: " + e.getMessage());
         }
 
-        if (futures == null) {
-            throw new FileConvertingException("Could not convert file");
-        }
-
-        futures.stream().map(result -> {
-            try {
-                return result.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new FileConvertingException(e.getMessage());
-            }
-        }).forEach(r -> {
-            if (r.substring(14, 19).equalsIgnoreCase("LARGE")) {
-                fileEntity.setPathLarge(r);
-            } else if (r.substring(14, 20).equalsIgnoreCase("MEDIUM")) {
-                fileEntity.setPathMedium(r);
-            } else if (r.substring(14, 19).equalsIgnoreCase("SMALL")) {
-                fileEntity.setPathSmall(r);
-            }
-        });
+        futures.stream()
+                .map(result -> {
+                    try {
+                        return result.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new FileConvertingException(e.getMessage());
+                    }
+                })
+                .forEach(r -> {
+                    if (r.substring(14, 19).equalsIgnoreCase("LARGE")) {
+                        fileEntity.setPathLarge(r);
+                    } else if (r.substring(14, 20).equalsIgnoreCase("MEDIUM")) {
+                        fileEntity.setPathMedium(r);
+                    } else if (r.substring(14, 19).equalsIgnoreCase("SMALL")) {
+                        fileEntity.setPathSmall(r);
+                    }
+                });
 
         executorService.shutdown();
 
