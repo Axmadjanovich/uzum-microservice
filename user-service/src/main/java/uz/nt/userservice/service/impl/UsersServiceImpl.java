@@ -13,7 +13,9 @@ import uz.nt.userservice.service.mapper.UsersMapper;
 import validator.AppStatusCodes;
 import validator.AppStatusMessages;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -124,11 +126,22 @@ public class UsersServiceImpl implements UsersService {
 
     }
 
-    public ResponseDto<Void> insertData(Integer number) {
-        usersRepository.insertRecordsIntoUsers(number);
+    public ResponseDto<Void> insertData(Integer count) {
+        if (usersRepository.insertRecordsIntoUsers(count) != -1) {
+            return ResponseDto.<Void>builder()
+                    .message(AppStatusMessages.OK)
+                    .success(true)
+                    .build();
+        }
         return ResponseDto.<Void>builder()
+                .message(AppStatusMessages.UNEXPECTED_ERROR)
+                .build();
+    }
+
+    public ResponseDto<Stream<UsersDto>> getAllUsers() {
+        return ResponseDto.<Stream<UsersDto>>builder()
                 .message(AppStatusMessages.OK)
-                .success(true)
+                .data(usersRepository.findAllByEnabledNull().map(userMapper::toDto))
                 .build();
     }
 }

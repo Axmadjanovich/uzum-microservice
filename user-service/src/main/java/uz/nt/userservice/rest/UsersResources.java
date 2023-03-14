@@ -5,6 +5,7 @@ import dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import uz.nt.userservice.client.ProductClient;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.service.impl.UsersServiceImpl;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/user")
@@ -43,6 +47,11 @@ public class UsersResources {
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
 
+    @Transactional
+    @GetMapping
+    public ResponseDto<Stream<UsersDto>> getAllUsers(){
+        return usersService.getAllUsers();
+    }
     @GetMapping("/{id}")
     public ResponseDto<UsersDto> getUserById(@PathVariable Integer id){
         return usersService.getById(id);
@@ -53,7 +62,7 @@ public class UsersResources {
         return productClient.getProducts(10, 0);
     }
     @PostMapping("/insert")
-    public ResponseDto<Void> insertData(@RequestParam Integer number){
-        return usersService.insertData(number);
+    public ResponseDto<Void> insertData(@RequestParam Integer count){
+        return usersService.insertData(count);
     }
 }
