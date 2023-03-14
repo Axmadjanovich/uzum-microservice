@@ -2,14 +2,16 @@ package uz.nt.userservice.rest;
 
 import dto.ErrorDto;
 import dto.ResponseDto;
-import org.apache.http.MethodNotSupportedException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import validator.AppStatusCodes;
 import validator.AppStatusMessages;
 
+import java.net.ConnectException;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -26,5 +28,17 @@ public class ExceptionHandlerResource {
                                 .map(f -> new ErrorDto(f.getField(), f.getDefaultMessage()))
                                 .collect(Collectors.toList()))
                         .build());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ResponseDto<ErrorDto>> handlerInvalidArgument(RuntimeException e){
+        return ResponseEntity.badRequest().body(
+                ResponseDto.<ErrorDto>builder()
+                        .data(new ErrorDto("Database",e.getMessage()))
+                        .message(AppStatusMessages.DATABASE_ERROR)
+                        .code(AppStatusCodes.DATABASE_ERROR_CODE)
+                        .build()
+        );
     }
 }

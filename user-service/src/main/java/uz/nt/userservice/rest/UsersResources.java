@@ -14,6 +14,8 @@ import uz.nt.userservice.client.ProductClient;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.service.UsersService;
 
+import java.net.ConnectException;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class UsersResources {
                     @ApiResponse(responseCode = "403", description = "Authorization error")}
     )
     @PostMapping()
-    public ResponseDto<UsersDto> addUser(@RequestBody @Valid UsersDto usersDto) {
+    public ResponseDto<UsersDto> addUser(@RequestBody @Valid UsersDto usersDto) throws ConnectException {
         return usersService.addUser(usersDto);
     }
 
