@@ -15,7 +15,7 @@ import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.service.impl.UsersServiceImpl;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UsersResources {
     private final UsersServiceImpl usersService;

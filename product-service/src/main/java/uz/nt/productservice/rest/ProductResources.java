@@ -20,7 +20,7 @@ import java.util.Map;
 //TODO Coders: Units jadvalini qo'shish va har bir mahsulot uchun o'lchov birligini biriktirish.
 // Units => id, shortName, name, description
 @RestController
-@RequestMapping("product")
+@RequestMapping("products")
 @RequiredArgsConstructor
 @Slf4j
 public class ProductResources {

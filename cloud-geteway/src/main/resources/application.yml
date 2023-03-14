@@ -2,12 +2,12 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/**
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/products/**
 
-        - id: cbu
-          uri: https://cbu.uz/uz/arkhiv-kursov-valyut/json/
-          predicates:
-            - Method=GET
-        - id: user-products
-          uri: http://localhost:9006/user/products
-          predicates:
-            - Method=POST
