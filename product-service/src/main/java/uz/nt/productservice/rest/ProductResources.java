@@ -31,6 +31,10 @@ public class ProductResources {
 
     //TODO Coders: Category qo'shish
 
+    /**
+     * http://localhost:9003/swagger-ui/index.html - SWAGGER URL
+     **/
+
     private final ProductService productService;
     private final Environment environment;
 
