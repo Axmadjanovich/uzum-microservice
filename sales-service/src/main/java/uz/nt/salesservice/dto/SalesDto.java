@@ -1,5 +1,6 @@
 package uz.nt.salesservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,12 +17,12 @@ public class SalesDto {
 
     private Integer id;
 
-    @NotNull
+    @NotBlank
     private Integer productId;
 
-    @NotNull
+    @NotBlank
     private Integer price;
 
-    @NotNull(message = "Example: yyyy-MM-dd HH:mm:ss")
+    @NotBlank(message = "Example: yyyy-MM-dd HH:mm:ss")
     private String expirationDate;
 }
