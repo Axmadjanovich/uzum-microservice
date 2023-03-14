@@ -17,10 +17,10 @@ public class SalesDto {
 
     private Integer id;
 
-    @NotBlank
+    @NotNull
     private Integer productId;
 
-    @NotBlank
+    @NotNull
     private Integer price;
 
     @NotBlank(message = "Example: yyyy-MM-dd HH:mm:ss")

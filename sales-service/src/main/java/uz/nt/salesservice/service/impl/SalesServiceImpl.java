@@ -1,8 +1,6 @@
 package uz.nt.salesservice.service.impl;
 
 import dto.ResponseDto;
-import jakarta.servlet.http.HttpServletRequest;
-import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,13 +14,8 @@ import uz.nt.salesservice.rest.SalesResources;
 import uz.nt.salesservice.service.SalesService;
 import uz.nt.salesservice.service.mapper.SalesMapper;
 
-import java.sql.SQLDataException;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLTimeoutException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -195,7 +188,7 @@ public class SalesServiceImpl implements SalesService {
 
     @Override
     public ResponseDto<List<SalesDto>> getExpiredOneDay() {
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = LocalDateTime.now().plusDays(1);
         return ResponseDto.<List<SalesDto>>builder()
                 .data(salesRepository.findAllByExpirationDateIsBefore(localDateTime).stream().map(salesMapper::toDto).toList())
                 .build();
