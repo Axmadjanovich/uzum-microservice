@@ -146,12 +146,34 @@ public class ProductResources {
         return productService.getExpensiveProducts();
     }
 
+    @Operation(
+            summary = "Get products for sales",
+            method = "For sales",
+            description = "Get products for sales",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.
+                    RequestBody(description = "Product info",
+                    content = @Content(mediaType = "application/json")),
+            responses = {@ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "400", description = "Invalid id supplied"),
+                    @ApiResponse(responseCode = "404", description = "Product not found")}
+    )
     @GetMapping("for-sales")
     public ResponseDto<Stream<ProductDto>> getProductsForSales(@RequestParam List<Integer> salesList){
 //        List<Integer> list = List.of(1,2,3,4,5,6,7,8,9,10,11,12,13);
         return productService.getProductsForSales(salesList);
     }
 
+    @Operation(
+            summary = "Get all products with less amount",
+            method = "product with less amount",
+            description = "Get all products with less amount",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.
+                    RequestBody(description = "Product info",
+                    content = @Content(mediaType = "application/json")),
+            responses = {@ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "400", description = "Invalid id supplied"),
+                    @ApiResponse(responseCode = "404", description = "Product not found")}
+    )
     @GetMapping("product-with-less-amount")
     public ResponseDto<Stream<ProductDto>> getAllProductsWithLessAmount(){
         return productService.getAllProductsWithLessAmount();
