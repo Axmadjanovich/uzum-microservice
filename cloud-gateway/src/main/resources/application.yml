@@ -1,12 +1,20 @@
-spring:
-  cloud:
-    gateway:
-      routes:
-        - id: user-service
-          uri: lb://user-service/
-          predicates:
-            - Path=user/*
-        - id: product-service
-          uri: lb://product-service/
-          predicates:
-            - Path=product/*
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: user-service
+#          uri: lb://user-service/user/
+#          predicates:
+#            - Path=/user/*,/user
+#        - id: product-service
+#          uri: lb://product-service/product/
+#          predicates:
+#            - Path=/product/*,/product
+#        - id: sales-service
+#          uri: lb://sales-service/sales/
+#          predicates:
+#            - Path=/sales,/sales/*
+#        - id: file-service
+#          uri: lb://file-service/file/
+#          predicates:
+#            - Path=/file,/file/*
