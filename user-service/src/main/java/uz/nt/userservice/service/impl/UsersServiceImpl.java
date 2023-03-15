@@ -187,7 +187,7 @@ public class UsersServiceImpl implements UsersService {
                     .build();
         }
 
-        if (userFromRedis.isEmpty() && userFromPSQL.get().getEnabled() == false) {
+        if (userFromRedis.isEmpty() && !userFromPSQL.get().getEnabled()) {
             return resendCode(email);
         }
 
