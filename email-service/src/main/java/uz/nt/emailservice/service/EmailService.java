@@ -23,7 +23,7 @@ public class EmailService {
     private final SalesClient salesClient;
     private final String htmlCode;
 
-    public ResponseDto<Boolean> sendEmail(String toEmail, String code){
+    public ResponseDto<Boolean> sendEmail(String toEmail, String code) {
         try {
             MimeMessage sendMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(sendMessage, true);
@@ -32,7 +32,7 @@ public class EmailService {
 
             String url = "http://localhost:9006/user/verify?email=" + toEmail + "&code=" + code;
 
-            String htmlMessage = htmlCode.replaceFirst("linebreak",url);
+            String htmlMessage = htmlCode.replaceFirst("//url//", url);
 
             helper.setText(htmlMessage, true);
 
@@ -44,10 +44,10 @@ public class EmailService {
                     .success(true)
                     .data(true)
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseDto.<Boolean>builder()
-                    .message("Error: "+e.getMessage())
+                    .message("Error: " + e.getMessage())
                     .code(-2)
                     .data(false)
                     .success(false)
@@ -55,43 +55,50 @@ public class EmailService {
         }
     }
 
-    public ResponseDto<Boolean> sendEmailAboutSalesProduct(String email){
+    public ResponseDto<Boolean> sendEmailAboutSalesProduct(String email) {
         List<SalesDto> sales = salesClient.getSalesProductExp().getData();
         try {
             MimeMessage sendMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(sendMessage, true);
             helper.setTo(email);
             helper.setSubject("Uzum marketda jegirma tugashiga bir kun qoldi");
-            String htmlBody = "<!DOCTYPE html>\n" +
-                    "<html lang=\"en\">\n" +
-                    "<head>\n" +
-                    "    <meta charset=\"UTF-8\">\n" +
-                    "    <title>Uzum</title>\n" +
-                    "</head>\n" +
-                    "<body>\n" +
-                    "<table>\n" +
-                    "  <tr>\n" +
-                    "    <th>Name</th>\n" +
-                    "    <th>OldPrice</th>\n" +
-                    "    <th>New Price</th>\n" +
-                    "    <th>Image</th>\n"+
-                    "  </tr>";
+            StringBuilder htmlBody = new StringBuilder("""
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Uzum</title>
+                    </head>
+                    <body>
+                    <table>
+                      <tr>
+                        <th>Name</th>
+                        <th>OldPrice</th>
+                        <th>New Price</th>
+                        <th>Image</th>
+                      </tr>""");
 
-            List<ProductDto> products = productClient.getProductsById(sales.stream().map(i -> i.getId()).toList()).getData().toList();
+            List<ProductDto> products = productClient.getProductsById(sales.stream().map(SalesDto::getId).toList()).getData().toList();
 
+            StringBuilder row = new StringBuilder();
 
             for (ProductDto product : products) {
-                htmlBody+="<tr>\n" +
-                        "    <td>"+product.getName()+"</td>\n" +
-                        "    <td>"+sales.stream().filter(p -> product.getId().equals(p.getProductId())).findFirst().get().getPrice()+"</td>\n" +
-                        "    <td>"+product.getPrice()+"</td>\n" +
-                        "    <td><img src='data:image/png;base64," + fileClient.getFileBytes(product.getFileId(),"SMALL")+"></img></td>\n"+
-                        "  </tr>";
+                row.append("<tr>\n<td>");
+                row.append(product.getName());
+                row.append("</td>\n <td>");
+                row.append(sales.stream().filter(p -> product.getId().equals(p.getProductId())).findFirst().get().getPrice());
+                row.append("</td>\n <td>");
+                row.append(product.getPrice());
+                row.append("</td> \n <td><img src='data:image/png;base64,");
+                row.append(fileClient.getFileBytes(product.getFileId(), "SMALL"));
+                row.append("></img></td>\n </tr>");
+                row=new StringBuilder();
+                htmlBody.append(row);
             }
-            htmlBody+="</table>\n" +
-                    "</body>\n" +
-                    "</html>";
-            helper.setText(htmlBody, true);
+            htmlBody.append("</table>");
+            htmlBody.append("</body>");
+            htmlBody.append("</html>");
+            helper.setText(htmlBody.toString(), true);
             helper.setSubject("Jegirmaning ohirgi kuni");
 
 
@@ -104,7 +111,7 @@ public class EmailService {
                     .data(true)
                     .build();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseDto.<Boolean>builder()
                     .message("Error: " + e.getMessage())
                     .code(-2)
