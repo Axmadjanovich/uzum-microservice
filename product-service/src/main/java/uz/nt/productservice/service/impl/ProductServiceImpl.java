@@ -20,12 +20,15 @@ import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.validator.ValidationService;
 import validator.AppStatusCodes;
 
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static validator.AppStatusCodes.*;
+import static validator.AppStatusMessages.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -218,8 +221,17 @@ public class ProductServiceImpl implements ProductService {
 //                .build();
 //    }
 
-//    @Override
-//    public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort) {
-//        return null;
-//    }
+    @Override
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        List<ProductDto> products = productRepository.getExpensiveProducts1().stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .success(true)
+                .data(products)
+                .build();
+    }
 }

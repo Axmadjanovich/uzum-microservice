@@ -1,0 +1,14 @@
+spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: user-service
+#          uri: lb://user-service/
+#          predicates:
+#            - Path=/user/*
+#        - id: product-service
+#          uri: lb://product-service/
+#          predicates:
+#            - Path=/product/*,/product
+  main:
+    web-application-type: reactive
