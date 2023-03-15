@@ -5,8 +5,10 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.RequestParam;
 import uz.nt.userservice.dto.UsersDto;
 
+import java.net.ConnectException;
+
 public interface UsersService {
-    public ResponseDto<UsersDto> addUser(UsersDto dto);
+    public ResponseDto<UsersDto> addUser(UsersDto dto) throws ConnectException;
     public ResponseDto<UsersDto> updateUser(UsersDto usersDto);
     public ResponseDto<EntityModel<UsersDto>> getUserByPhoneNumber(String phoneNumber);
     public ResponseDto<UsersDto> getById(Integer id);

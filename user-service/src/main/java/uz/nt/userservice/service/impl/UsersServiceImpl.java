@@ -18,6 +18,7 @@ import uz.nt.userservice.service.mapper.UsersMapper;
 import validator.AppStatusCodes;
 import validator.AppStatusMessages;
 
+import java.net.ConnectException;
 import java.util.Optional;
 import java.util.Random;
 
@@ -37,6 +38,8 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         try {
+
+
             Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
 
             if (firstByEmail.isEmpty()) {
@@ -50,27 +53,28 @@ public class UsersServiceImpl implements UsersService {
                             .code(OK_CODE)
                             .success(true)
                             .build();
+                } else {
+                    throw new RuntimeException("Failure in connecting with email service");
                 }
 
-                throw new RuntimeException("Failure in connecting with email service");
+            } else {
+                if (firstByEmail.isPresent() && firstByEmail.get().getEnabled()) {
+                    return ResponseDto.<UsersDto>builder()
+                            .code(UNEXPECTED_ERROR_CODE)
+                            .message("User has already been registered")
+                            .build();
+                }
             }
-
-            if (firstByEmail.get().getEnabled()) {
-                return ResponseDto.<UsersDto>builder()
-                        .code(UNEXPECTED_ERROR_CODE)
-                        .message("User has already been registered")
-                        .build();
-            }
-
             return ResponseDto.<UsersDto>builder()
                     .code(UNEXPECTED_ERROR_CODE)
                     .message("Verify your email address with the following link")
                     .build();
 
-            //TODO AppMonsters: User emailiga xabar yuborish.
-        } catch (Exception ex) {
-            throw new RuntimeException("An error occurred while saving user data", ex);
+        }catch (RuntimeException e){
+            throw new RuntimeException(e.getMessage());
         }
+
+
     }
 
 
@@ -207,7 +211,6 @@ public class UsersServiceImpl implements UsersService {
                 .build();
 
     }
-
     public ResponseDto<Void> resendCode(String email) {
         String code = getCode();
         Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
@@ -260,4 +263,8 @@ public class UsersServiceImpl implements UsersService {
         }
         return code;
     }
+
+
+
+
 }
