@@ -30,6 +30,7 @@ public class ProductResources {
     private final ProductService productService;
     private final Environment environment;
 
+    /**POST qilishda form-data'ga Category id, Unit id qo'shish uchun-> category.id, units.id**/
     @PostMapping(consumes = {"multipart/form-data", "application/json"})
     public ResponseDto<ProductDto> addNewProduct(@ModelAttribute ProductDto productDto) throws IOException {
         return productService.addNewProduct(productDto);
@@ -68,12 +69,9 @@ public class ProductResources {
 //        return productService.getExpensiveProducts();
 //    }
 
-
-
-//
-//    @GetMapping("sort")
-//    public ResponseDto<List<ProductDto>> getProducts(@RequestParam List<String> sort){
-//        return productService.getAllProductsWithSort(sort);
-//    }
+    @GetMapping("/expensive-by-category")
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        return productService.getExpensiveProducts();
+    }
 
 }
