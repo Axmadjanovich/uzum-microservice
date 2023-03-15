@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ import static validator.AppStatusMessages.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -45,20 +47,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) throws IOException {
 
-        List<ErrorDto> errors = ValidationService.validation(productDto);
-
-        if (!errors.isEmpty()) {
-            return ResponseDto.<ProductDto>builder()
-                    .errors(errors)
-                    .data(productDto)
-                    .message("VALIDATION_ERROR")
-                    .code(-2)
-                    .success(false)
-                    .build();
-        }
-
         Product product = productMapper.toEntity(productDto);
-
         ResponseDto<Integer> imageResponse = fileClient.uploadFile(productDto.getImage());
         if (!imageResponse.isSuccess()){
             return ResponseDto.<ProductDto>builder()
@@ -66,15 +55,25 @@ public class ProductServiceImpl implements ProductService {
                     .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)
                     .build();
         }
-
         product.setFileId(imageResponse.getData());
-        productRepository.save(product);
 
-        return ResponseDto.<ProductDto>builder()
-                .data(productMapper.toDto(product))
-                .success(true)
-                .message("Ok")
-                .build();
+        try {
+            productRepository.save(product);
+            return ResponseDto.<ProductDto>builder()
+                    .data(productMapper.toDto(product))
+                    .success(true)
+                    .code(OK_CODE)
+                    .message(OK)
+                    .build();
+        }catch (Exception e){
+             return ResponseDto.<ProductDto>builder()
+                    .data(productMapper.toDto(product))
+                    .message(DATABASE_ERROR)
+                    .code(DATABASE_ERROR_CODE)
+                    .build();
+        }
+
+
     }
 
     @Override
@@ -82,16 +81,16 @@ public class ProductServiceImpl implements ProductService {
 
         if (productDto.getId() == null) {
             return ResponseDto.<ProductDto>builder()
-                    .message("Product ID is null")
-                    .code(-2)
+                    .message(NOT_FOUND)
+                    .code(NOT_FOUND_ERROR_CODE)
                     .build();
         }
 
         Optional<Product> productOptional = productRepository.findById(productDto.getId());
         if (productOptional.isEmpty()) {
             return ResponseDto.<ProductDto>builder()
-                    .message("NOT_FOUND")
-                    .code(-1) //NOT_FOUND_ERROR_CODE
+                    .message(NOT_FOUND)
+                    .code(NOT_FOUND_ERROR_CODE) //NOT_FOUND_ERROR_CODE
                     .data(productDto)
                     .build();
         }
@@ -123,8 +122,8 @@ public class ProductServiceImpl implements ProductService {
                     .build();
         } catch (Exception e) {
             return ResponseDto.<ProductDto>builder()
-                    .message("DATABASE_ERROR" + ": " + e.getMessage())
-                    .code(2) //DATABASE_ERROR_CODE
+                    .message(DATABASE_ERROR + ": " + e.getMessage())
+                    .code(DATABASE_ERROR_CODE) //DATABASE_ERROR_CODE
                     .build();
         }
     }
@@ -165,11 +164,11 @@ public class ProductServiceImpl implements ProductService {
                         .data(productMapper.toDto(products))
                         .success(true)
                         .code(0)
-                        .message("OK")
+                        .message(OK)
                         .build())
                 .orElse(ResponseDto.<ProductDto>builder()
-                        .message("NOT_FOUND")
-                        .code(-1) // NOT_FOUND_ERROR_CODE
+                        .message(NOT_FOUND)
+                        .code(NOT_FOUND_ERROR_CODE) // NOT_FOUND_ERROR_CODE
                         .build()
                 );
     }
@@ -180,13 +179,13 @@ public class ProductServiceImpl implements ProductService {
 
         if (products.isEmpty()){
             return ResponseDto.<Page<ProductDto>>builder()
-                    .code(-1) //NOT_FOUND_ERROR_CODE
-                    .message("NOT_FOUND")
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
                     .build();
         }
 
         return ResponseDto.<Page<ProductDto>>builder()
-                .message("OK")
+                .message(OK)
                 .data(products.map(productMapper::toDto))
                 .build();
 
@@ -209,21 +208,9 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
-//    @Override
-//    public ResponseDto<Page<ProductDto>> getExpensiveProducts() {
-//        Page<ProductDto> products = productRepository.getExpensiveProducts2().map(productMapper::toDto);
-//
-//
-//        return ResponseDto.<Page<ProductDto>>builder()
-//                .data(products)
-//                .message("OK")
-//                .success(true)
-//                .build();
-//    }
-
     @Override
     public ResponseDto<List<ProductDto>> getExpensiveProducts(){
-        List<ProductDto> products = productRepository.getExpensiveProducts1().stream()
+        List<ProductDto> products = productRepository.getExpensiveProducts().stream()
                 .map(productMapper::toDto)
                 .toList();
 
@@ -232,6 +219,24 @@ public class ProductServiceImpl implements ProductService {
                 .code(OK_CODE)
                 .success(true)
                 .data(products)
+                .build();
+    }
+
+    @Override
+    public ResponseDto<Stream<ProductDto>> getProductsForSales(List<Integer> salesList) {
+      return   ResponseDto.<Stream<ProductDto>>builder()
+              .data(productRepository.findAllById(salesList).stream().map(productMapper::toDto))
+              .message(OK)
+              .success(true)
+              .build();
+    }
+
+    @Override
+    public ResponseDto<Stream<ProductDto>> getAllProductsWithLessAmount() {
+        return ResponseDto.<Stream<ProductDto>>builder()
+                .data(productRepository.getProductsWithLessAmount().stream().map(productMapper::toDto))
+                .success(true)
+                .message(OK)
                 .build();
     }
 }

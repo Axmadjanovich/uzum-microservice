@@ -11,4 +11,8 @@ public interface UnitService {
     ResponseDto<List<UnitDto>> getAllUnits();
 
     ResponseDto<UnitDto> updateUnit(UnitDto unitDto);
+
+    ResponseDto<UnitDto> deleteUnit(Integer id);
+
+    ResponseDto<UnitDto> getById(Integer id);
 }

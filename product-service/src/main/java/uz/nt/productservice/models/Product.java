@@ -16,6 +16,9 @@ import java.util.List;
 @NamedQuery(query = "select p from Product p where coalesce(:id, id) = id " +
         "and coalesce(:name, name) = name " +
         "and coalesce(:price, price) = price " +
+        "and coalesce(:description, description) = description " +
+        "and coalesce(:categoryId, category.id) = category.id " +
+        "and coalesce(:unitId, units.id) = units.id " +
         "and coalesce(:amount, amount) = amount", name = "findProductById")
 public class Product {
     @Id
@@ -32,6 +35,7 @@ public class Product {
     private Boolean isAvailable;
     @ManyToOne
     private Units units;
+    private Integer indicator;
 }
 //1. Product qo'shish
 //2. Bor productni o'zgartirish
