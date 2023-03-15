@@ -1,6 +1,7 @@
 package uz.nt.userservice.service.impl;
 
 import dto.ResponseDto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -13,7 +14,10 @@ import uz.nt.userservice.service.mapper.UsersMapper;
 import validator.AppStatusCodes;
 import validator.AppStatusMessages;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -122,5 +126,9 @@ public class UsersServiceImpl implements UsersService {
                         .code(AppStatusCodes.NOT_FOUND_ERROR_CODE)
                         .build());
 
+    }
+    @Transactional
+    public Stream<UsersDto> getAll() {
+        return usersRepository.findAllByEnabledIsFalse().map(e->userMapper.toDto(e));
     }
 }

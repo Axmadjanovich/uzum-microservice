@@ -14,6 +14,9 @@ import uz.nt.userservice.client.ProductClient;
 import uz.nt.userservice.dto.UsersDto;
 import uz.nt.userservice.service.impl.UsersServiceImpl;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -51,5 +54,10 @@ public class UsersResources {
     @GetMapping("/products")
     public ResponseDto<Page<EntityModel<ProductDto>>> getProductList(){
         return productClient.getProducts(10, 0);
+    }
+
+    @GetMapping
+    public Stream<UsersDto> getAll(){
+        return usersService.getAll();
     }
 }

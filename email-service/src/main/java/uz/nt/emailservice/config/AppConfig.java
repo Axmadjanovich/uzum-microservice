@@ -7,10 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import java.io.*;
 import java.util.Properties;
 
 @Configuration
-public class AppConfig {
+public class  AppConfig {
     @Value("${spring.mail.username}")
     private String username;
     @Value("${spring.mail.password}")
@@ -33,5 +34,12 @@ public class AppConfig {
         props.put("mail.debug", "true");
 
         return mailSender;
+    }
+    @Bean
+    public String getVerifyHtml() throws IOException {
+        InputStream inputStream = new FileInputStream("D:\\NT\\uzum-microservice\\email-service\\htmls\\verifyCOde.html");
+        String verifyCodeHtml = new String(inputStream.readAllBytes());
+//        return verifyCodeHtml;
+        return "linebreak";
     }
 }

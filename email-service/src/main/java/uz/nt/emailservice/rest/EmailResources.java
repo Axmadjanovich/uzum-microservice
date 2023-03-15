@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uz.nt.emailservice.clients.FileClient;
+import uz.nt.emailservice.clients.ProductClient;
+import uz.nt.emailservice.clients.SalesClient;
+import uz.nt.emailservice.clients.UserClient;
 import uz.nt.emailservice.service.EmailService;
 
 @RestController
@@ -18,8 +22,9 @@ public class EmailResources {
     // yuboradi.
 
     private final EmailService emailService;
+
     @PostMapping
-    public ResponseDto<Boolean> sendMessage(@RequestParam String email, String message){
+    public ResponseDto<Boolean> sendMessage(@RequestParam String email, @RequestParam String message){
         return emailService.sendEmail(email,message);
     }
 }
