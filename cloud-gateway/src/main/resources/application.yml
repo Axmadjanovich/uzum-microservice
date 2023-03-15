@@ -1,14 +1,18 @@
 spring:
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: user-service
-#          uri: lb://user-service/
-#          predicates:
-#            - Path=/user/*
-#        - id: product-service
-#          uri: lb://product-service/
-#          predicates:
-#            - Path=/product/*,/product
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service/
+          predicates:
+            - Path=/user/*
+        - id: product-service
+          uri: lb://product-service/
+          predicates:
+            - Path=/product/*,/product
+        - id: file-service
+          uri: lb://file-service/
+          predicates:
+            - Path=/file/*,/file
   main:
     web-application-type: reactive

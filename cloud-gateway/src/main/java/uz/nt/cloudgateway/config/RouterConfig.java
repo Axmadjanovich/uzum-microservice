@@ -36,9 +36,13 @@ public class RouterConfig {
 //                            return chain.filter(exchange);
 //                        }
 //                        )
+                        .filters(f -> f.addRequestParameter("page", "0")
+                                .addRequestParameter("size", "2"))
                         .uri("lb://product-service"))
                 .route(r -> r.path("/user/*", "/user")
                         .uri("lb://user-service"))
+                .route(r -> r.path("/file//", "/file")
+                        .uri("lb://file-service"))
                 .build();
     }
 }
