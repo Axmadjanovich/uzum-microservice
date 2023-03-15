@@ -1,14 +1,40 @@
-spring:
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: user-service
-#          uri: lb://user-service/
-#          predicates:
-#            - Path=/user/*
-#        - id: product-service
-#          uri: lb://product-service/
-#          predicates:
-#            - Path=/product/*,/product
-  main:
-    web-application-type: reactive
+#spring:
+#  main:
+#    web-application-type: reactive
+  #  cloud:
+  #    gateway:
+  #      routes:
+  #        - id: user-service
+  #          uri: lb://user-service/
+  #          predicates:
+  #            - Path=/user/*
+  #          filters:
+  #            - name: CircuitBreaker
+  #              args:
+  #                name: user-service
+  #                fallbackuri: forward:/userFallback
+  #        - id: product-service
+  #          uri: lb://product-service/
+  #          predicates:
+  #            - Path=/product/*,/product
+  #          filters:
+  #            - name: CircuitBreaker
+  #              args:
+  #                name: product-service
+  #                fallbackuri: forward:/productFallback
+
+
+management:
+  endpoint:
+    web:
+      exposure:
+        include: hystrix.stream
+
+
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
