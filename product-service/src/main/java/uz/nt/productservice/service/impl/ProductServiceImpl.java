@@ -18,25 +18,32 @@ import uz.nt.productservice.rest.ProductResources;
 import uz.nt.productservice.service.ProductService;
 import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.validator.ValidationService;
+import validator.AppStatusCodes;
 
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static validator.AppStatusCodes.UNEXPECTED_ERROR_CODE;
+import static validator.AppStatusCodes.*;
+import static validator.AppStatusMessages.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepositoryImpl productRepositoryImpl;
-    private final FileClient fileClient;
 
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final FileClient fileClient;
 
     @Override
-    public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) {
+    public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) throws IOException {
 
         List<ErrorDto> errors = ValidationService.validation(productDto);
 
@@ -49,16 +56,18 @@ public class ProductServiceImpl implements ProductService {
                     .success(false)
                     .build();
         }
+
         Product product = productMapper.toEntity(productDto);
 
-        ResponseDto<Integer> imageResponseDto = fileClient.uploadFile(productDto.getImage());
-        if(!imageResponseDto.isSuccess()){
+        ResponseDto<Integer> imageResponse = fileClient.uploadFile(productDto.getImage());
+        if (!imageResponse.isSuccess()){
             return ResponseDto.<ProductDto>builder()
-                    .message(imageResponseDto.getMessage())
-                    .code(UNEXPECTED_ERROR_CODE)
+                    .message(imageResponse.getMessage())
+                    .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)
                     .build();
         }
-        product.setFileId(imageResponseDto.getData());
+
+        product.setFileId(imageResponse.getData());
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
@@ -212,8 +221,17 @@ public class ProductServiceImpl implements ProductService {
 //                .build();
 //    }
 
-//    @Override
-//    public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort) {
-//        return null;
-//    }
+    @Override
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        List<ProductDto> products = productRepository.getExpensiveProducts1().stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .success(true)
+                .data(products)
+                .build();
+    }
 }

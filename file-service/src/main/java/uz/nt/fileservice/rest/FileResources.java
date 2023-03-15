@@ -1,5 +1,6 @@
 package uz.nt.fileservice.rest;
 
+import dto.FileDto;
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +14,14 @@ public class FileResources {
 
     private final Fileservices fileservices;
 
-    @PostMapping
-    public ResponseDto<Integer> uploadFile(@RequestBody MultipartFile file){
-        return fileservices.fileUpload(file);
-    }
+    //TODO har kuni 00:00 da ishlab, product-service dan kam qolgan mahsulotlar ro'yxatini tortib keladi va
+    // uploads papkani ichida yangi product-reports papka ochib, shuni ichiga har kunlik Excel fayllar kun bo'yicha nomlanib
+    // tashlab boriladi
 
-    @GetMapping
-    public ResponseDto<java.io.File> getFileById(@RequestParam Integer id){
-        return fileservices.getFileById(id);
+    //TODO rasmni 3 xil kattalikda saqlash
+    @PostMapping
+    public ResponseDto<Integer> uploadFile(@RequestPart("file") MultipartFile file){
+        return fileservices.fileUpload(file);
     }
 
 }
