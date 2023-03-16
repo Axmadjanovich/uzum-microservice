@@ -50,15 +50,21 @@ public class ProductRepositoryImpl {
             else page = (int) count / size;
         }
 
-        query.setFirstResult(size*page);
+        query.setFirstResult(size * page);
         query.setMaxResults(size);
 
-        return new PageImpl<>(query.getResultList(), PageRequest.of(page,size),count);
+        return new PageImpl<>(query.getResultList(), PageRequest.of(page, size), count);
 
     }
 
     //TODO qidiruvga ID va categoryID ustunlarini qo'shish
     private void generateQueryCondition(StringBuilder queryCondition, Map<String, String> params) {
+        if (params.containsKey("id")) {
+            queryCondition.append(" AND p.id = :id ");
+        }
+        if (params.containsKey("categoryId")) {
+            queryCondition.append(" AND p.categoryId = :categoryId ");
+        }
         if (params.containsKey("name")) {
             queryCondition.append(" AND upper(p.name) like :name ");
         }
@@ -75,6 +81,13 @@ public class ProductRepositoryImpl {
     }
 
     private void setParams(Query query, Map<String, String> params) {
+        if (params.containsKey("id")) {
+            query.setParameter("id", Integer.parseInt(params.get("id")));
+        }
+
+        if (params.containsKey("categoryId")) {
+            query.setParameter("categoryId", Integer.parseInt(params.get("categoryId")));
+        }
         if (params.containsKey("name")) {
             query.setParameter("name", "%" + params.get("name").toUpperCase() + "%");
         }

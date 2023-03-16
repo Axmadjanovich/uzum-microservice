@@ -4,6 +4,7 @@ import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.nt.productservice.dto.UnitDto;
+import uz.nt.productservice.models.Units;
 import uz.nt.productservice.repository.UnitRepository;
 import uz.nt.productservice.service.UnitService;
 import uz.nt.productservice.service.mapper.UnitMapper;
@@ -11,6 +12,7 @@ import validator.AppStatusCodes;
 import validator.AppStatusMessages;
 
 import java.util.List;
+import java.util.Optional;
 
 import static validator.AppStatusCodes.*;
 import static validator.AppStatusMessages.*;
@@ -41,7 +43,73 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
-    public ResponseDto<UnitDto> updateUnit(UnitDto unitDto) {
-        return null;
+    public ResponseDto<UnitDto> updateUnit(UnitDto dto) {
+        if(dto.getId() == null){
+            return ResponseDto.<UnitDto>builder()
+                    .message(NULL_VALUE)
+                    .code(VALIDATION_ERROR_CODE)
+                    .data(dto)
+                    .build();
+        }
+
+        Optional<Units> optionalUnits = unitRepository.findById(dto.getId());
+        if (optionalUnits.isEmpty()){
+            return ResponseDto.<UnitDto>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .success(false)
+                    .data(dto)
+                    .build();
+        }
+        Units units = optionalUnits.get();
+        units.setId(dto.getId());
+        if (dto.getName() != null){
+            units.setName(dto.getName());
+        }
+        if (dto.getDescription() != null){
+            units.setDescription(dto.getDescription());
+        }
+        if (dto.getShortName() != null){
+            units.setShortName(dto.getShortName());
+        }
+        try {
+            unitRepository.save(units);
+
+            return ResponseDto.<UnitDto>builder()
+                    .code(OK_CODE)
+                    .message(OK)
+                    .data(unitMapper.toDto(units))
+                    .success(true)
+                    .build();
+        }catch (Exception e){
+            return ResponseDto.<UnitDto>builder()
+                    .data(unitMapper.toDto(units))
+                    .code(DATABASE_ERROR_CODE)
+                    .message(DATABASE_ERROR + e.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
+    public ResponseDto<UnitDto> deleteUnit(Integer id) {
+        Optional<Units> optionalUser = unitRepository.findById(id);
+
+        if(optionalUser.isEmpty()){
+            return ResponseDto.<UnitDto>builder()
+                    .message(NOT_FOUND)
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .success(false)
+                    .build();
+        }
+
+        Units users = optionalUser.get();
+
+        unitRepository.deleteById(id);
+
+        return ResponseDto.<UnitDto>builder()
+                .message("User with ID " + id + " is deleted")
+                .code(OK_CODE)
+                .data(unitMapper.toDto(users))
+                .build();
     }
 }
