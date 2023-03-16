@@ -13,6 +13,7 @@ import uz.nt.salesservice.repository.SalesRepository;
 import uz.nt.salesservice.rest.SalesResources;
 import uz.nt.salesservice.service.SalesService;
 import uz.nt.salesservice.service.mapper.SalesMapper;
+import validator.AppStatusCodes;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,23 +32,21 @@ public class SalesServiceImpl implements SalesService {
     private final SalesRepository salesRepository;
     @Override
     public ResponseDto<SalesDto> addSales(SalesDto salesDto) {
-        return ResponseDto.<SalesDto>builder()
-                .code(OK_CODE)
-                .success(true)
-                .message(OK)
-                .data(salesMapper.toDto(salesRepository.save(salesMapper.toEntity(salesDto))))
-                .build();
-    }
 
-//    @Override
-//    public ResponseDto<List<SalesDto>> getAllSales() {
-//        return ResponseDto.<List<SalesDto>>builder()
-//                .data(salesRepository.findAll().stream().map(salesMapper::toDto).toList())
-//                .code(OK_CODE)
-//                .message(OK)
-//                .success(true)
-//                .build();
-//    }
+        try{
+            return ResponseDto.<SalesDto>builder()
+                    .code(OK_CODE)
+                    .success(true)
+                    .message(OK)
+                    .data(salesMapper.toDto(salesRepository.save(salesMapper.toEntity(salesDto))))
+                    .build();
+        }catch (Exception e){
+            return ResponseDto.<SalesDto>builder()
+                    .code(DATABASE_ERROR_CODE)
+                    .message(DATABASE_ERROR)
+                    .build();
+        }
+    }
 
     @Override
     public ResponseDto<Page<EntityModel<SalesDto>>> getAllSales(Integer page, Integer size) {
@@ -139,7 +138,7 @@ public class SalesServiceImpl implements SalesService {
     public ResponseDto<SalesDto> update(SalesDto salesDto) {
         if(salesDto.getId() == null){
             return ResponseDto.<SalesDto>builder()
-                    .message("Id is null")
+                    .message(NULL_VALUE)
                     .code(VALIDATION_ERROR_CODE)
                     .build();
         }

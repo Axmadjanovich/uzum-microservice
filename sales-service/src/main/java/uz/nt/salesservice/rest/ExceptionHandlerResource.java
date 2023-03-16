@@ -22,7 +22,7 @@ public class ExceptionHandlerResource {
                 .body(ResponseDto.<Void>builder()
                         .code(VALIDATION_ERROR_CODE)
                         .message(VALIDATION_ERROR)
-                        .errors(List.of(new ErrorDto("null",e.getMessage())))
+                        .errors(List.of(new ErrorDto(e.toString(),e.getMessage())))
                         .build());
     }
 

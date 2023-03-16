@@ -31,7 +31,7 @@ public class SalesResources {
             responses = {@ApiResponse(responseCode = "200", description = "OK")}
     )
     @PostMapping
-    public ResponseDto<SalesDto> addSales(@Valid @RequestBody SalesDto salesDto){
+    public ResponseDto<SalesDto> addSales(@Valid @RequestBody SalesDto salesDto) {
         return salesService.addSales(salesDto);
     }
 
@@ -59,10 +59,6 @@ public class SalesResources {
             responses = {@ApiResponse(responseCode = "200", description = "OK"),
                     @ApiResponse(responseCode = "404", description = "Sales not found")}
     )
-//    @GetMapping("/all")
-//    public ResponseDto<List<SalesDto>> getAllSales(){
-//        return salesService.getAllSales();
-//    }
 
     @GetMapping("/all")
     public ResponseDto<Page<EntityModel<SalesDto>>> getAllSales(@RequestParam(defaultValue = "10") Integer size,
