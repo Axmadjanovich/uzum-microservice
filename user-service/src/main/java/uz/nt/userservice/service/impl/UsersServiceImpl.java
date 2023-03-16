@@ -39,7 +39,6 @@ public class UsersServiceImpl implements UsersService {
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         try {
 
-
             Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
 
             if (firstByEmail.isEmpty()) {
@@ -57,8 +56,9 @@ public class UsersServiceImpl implements UsersService {
                     throw new RuntimeException("Failure in connecting with email service");
                 }
 
-            } else {
-                if (firstByEmail.isPresent() && firstByEmail.get().getEnabled()) {
+            }
+            else {
+                if (firstByEmail.get().getEnabled()) {
                     return ResponseDto.<UsersDto>builder()
                             .code(UNEXPECTED_ERROR_CODE)
                             .message("User has already been registered")
@@ -73,8 +73,6 @@ public class UsersServiceImpl implements UsersService {
         }catch (RuntimeException e){
             throw new RuntimeException(e.getMessage());
         }
-
-
     }
 
 
