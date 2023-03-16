@@ -46,20 +46,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseDto<ProductDto> addNewProduct(ProductDto productDto) throws IOException {
 
-        List<ErrorDto> errors = ValidationService.validation(productDto);
-
-        if (!errors.isEmpty()) {
-            return ResponseDto.<ProductDto>builder()
-                    .errors(errors)
-                    .data(productDto)
-                    .message(VALIDATION_ERROR)
-                    .code(-2)
-                    .success(false)
-                    .build();
-        }
-
         Product product = productMapper.toEntity(productDto);
-
         ResponseDto<Integer> imageResponse = fileClient.uploadFile(productDto.getImage());
         if (!imageResponse.isSuccess()){
             return ResponseDto.<ProductDto>builder()
@@ -67,15 +54,25 @@ public class ProductServiceImpl implements ProductService {
                     .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)
                     .build();
         }
-
         product.setFileId(imageResponse.getData());
-        productRepository.save(product);
 
-        return ResponseDto.<ProductDto>builder()
-                .data(productMapper.toDto(product))
-                .success(true)
-                .message("Ok")
-                .build();
+        try {
+            productRepository.save(product);
+            return ResponseDto.<ProductDto>builder()
+                    .data(productMapper.toDto(product))
+                    .success(true)
+                    .code(OK_CODE)
+                    .message(OK)
+                    .build();
+        }catch (Exception e){
+            return ResponseDto.<ProductDto>builder()
+                    .data(productMapper.toDto(product))
+                    .message(DATABASE_ERROR)
+                    .code(DATABASE_ERROR_CODE)
+                    .build();
+        }
+
+
     }
 
     @Override
