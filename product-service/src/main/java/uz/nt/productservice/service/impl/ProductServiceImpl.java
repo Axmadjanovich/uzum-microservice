@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
             return ResponseDto.<ProductDto>builder()
                     .errors(errors)
                     .data(productDto)
-                    .message("VALIDATION_ERROR")
+                    .message(VALIDATION_ERROR)
                     .code(-2)
                     .success(false)
                     .build();
