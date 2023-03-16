@@ -1,10 +1,7 @@
 package uz.nt.productservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import static validator.AppStatusMessages.EMPTY_STRING;
 import static validator.AppStatusMessages.SIZE_MISMATCH;
@@ -13,6 +10,7 @@ import static validator.AppStatusMessages.SIZE_MISMATCH;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UnitDto {
     private Integer id;
     @NotBlank(message = EMPTY_STRING)

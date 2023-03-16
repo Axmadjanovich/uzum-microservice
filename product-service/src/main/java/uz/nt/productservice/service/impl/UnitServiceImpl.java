@@ -24,12 +24,22 @@ public class UnitServiceImpl implements UnitService {
     private final UnitMapper unitMapper;
     @Override
     public ResponseDto<UnitDto> addNewUnit(UnitDto unitDto) {
-        return ResponseDto.<UnitDto>builder()
-                .code(OK_CODE)
-                .message(OK)
-                .success(true)
-                .data(unitMapper.toDto(unitRepository.save(unitMapper.toEntity(unitDto))))
-                .build();
+        try {
+            return ResponseDto.<UnitDto>builder()
+                    .code(OK_CODE)
+                    .message(OK)
+                    .success(true)
+                    .data(unitMapper.toDto(unitRepository.save(unitMapper.toEntity(unitDto))))
+                    .build();
+        }catch (Exception e){
+            return ResponseDto.<UnitDto>builder()
+                    .code(DATABASE_ERROR_CODE)
+                    .message(DATABASE_ERROR)
+                    .success(false)
+                    .data(unitDto)
+                    .build();
+        }
+
     }
 
     @Override
@@ -48,6 +58,7 @@ public class UnitServiceImpl implements UnitService {
             return ResponseDto.<UnitDto>builder()
                     .message(NULL_VALUE)
                     .code(VALIDATION_ERROR_CODE)
+                    .success(false)
                     .data(dto)
                     .build();
         }
@@ -62,7 +73,6 @@ public class UnitServiceImpl implements UnitService {
                     .build();
         }
         Units units = optionalUnits.get();
-        units.setId(dto.getId());
         if (dto.getName() != null){
             units.setName(dto.getName());
         }
@@ -96,7 +106,7 @@ public class UnitServiceImpl implements UnitService {
             unitRepository.delete(units);
             return ResponseDto.<UnitDto>builder()
                     .code(OK_CODE)
-                    .message("Unit with ID " + id + " is deleted")
+                    .message(OK)
                     .success(true)
                     .data(unitMapper.toDto(units))
                     .build();
