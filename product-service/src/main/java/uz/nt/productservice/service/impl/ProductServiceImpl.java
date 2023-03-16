@@ -19,6 +19,7 @@ import uz.nt.productservice.service.ProductService;
 import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.validator.ValidationService;
 import validator.AppStatusCodes;
+import validator.AppStatusMessages;
 
 
 import java.io.IOException;
@@ -51,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
             return ResponseDto.<ProductDto>builder()
                     .errors(errors)
                     .data(productDto)
-                    .message("VALIDATION_ERROR")
+                    .message(VALIDATION_ERROR)
                     .code(-2)
                     .success(false)
                     .build();
