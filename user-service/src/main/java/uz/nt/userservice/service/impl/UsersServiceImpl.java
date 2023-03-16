@@ -75,7 +75,7 @@ public class UsersServiceImpl implements UsersService {
             throw new ConnectionException(e.getField(), e.getMessage());
         } catch (RuntimeException e){
             userVerificationRepository.delete(new UserVerification(dto.getEmail(), code));
-            throw new ConnectionException("Database","Database error");
+            throw new ConnectionException("Database","Don't send your email code");
         }
     }
 
