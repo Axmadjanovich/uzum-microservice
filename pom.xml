@@ -28,7 +28,7 @@
         <module>service-registry</module>
         <module>order-service</module>
         <module>config-server</module>
-        <module>cloud-gateways</module>
+        <module>sales-service</module>
     </modules>
     <dependencies>
         <dependency>

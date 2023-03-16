@@ -66,5 +66,27 @@ class SalesServiceApplicationTests {
                 ()->assertFalse(response.isSuccess(),"not found success or id null")
         );
     }
+    @Test
+    @DisplayName("delete by id if Found")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "/sql/insert-test-value.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/sql/delete-test-value.sql")
+    void deleteByIdIfFound(){
+        ResponseDto<SalesDto> responce = salesService.deleteById(1);
+        assertAll(
+                ()->assertTrue(responce.isSuccess(),"delete by id: id"),
+                ()->assertEquals(responce.getCode(),AppStatusCodes.OK_CODE, "delete by id: code"),
+                ()->assertEquals(responce.getMessage(),AppStatusMessages.OK,"delete by id: message")
+        );
+    }
+    @Test
+    @DisplayName("delete by id if not found")
+    void deleteByIdIfNotFound(){
+        ResponseDto<SalesDto> responce = salesService.getById(123412);
+        assertAll(
+                ()->assertFalse(responce.isSuccess(),"delete by id if not found: id"),
+                ()->assertEquals(responce.getCode(),AppStatusCodes.NOT_FOUND_ERROR_CODE, "delete by id not found: code"),
+                ()->assertEquals(responce.getMessage(),AppStatusMessages.NOT_FOUND,"delete by id not found: message")
+        );
+    }
 
 }
