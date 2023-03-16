@@ -45,12 +45,12 @@ public class ProductRepositoryImpl {
 
         long count = (long) queryCounter.getSingleResult();
 
-        if (count / size <= page) {
+        if ( count > 0 &&  count / size <= page) {
             if (count % size == 0) page = (int) (count / size) - 1;
             else page = (int) count / size;
         }
 
-        query.setFirstResult(size * page);
+        query.setFirstResult(size*page);
         query.setMaxResults(size);
 
         return new PageImpl<>(query.getResultList(), PageRequest.of(page, size), count);

@@ -58,8 +58,8 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Product product = productMapper.toEntity(productDto);
-
         ResponseDto<Integer> imageResponse = fileClient.uploadFile(productDto.getImage());
+
         if (!imageResponse.isSuccess()){
             return ResponseDto.<ProductDto>builder()
                     .message(imageResponse.getMessage())
@@ -76,10 +76,8 @@ public class ProductServiceImpl implements ProductService {
                 .message("Ok")
                 .build();
     }
-
     @Override
     public ResponseDto<ProductDto> updateProduct(ProductDto productDto) {
-
         if (productDto.getId() == null) {
             return ResponseDto.<ProductDto>builder()
                     .message("Product ID is null")
@@ -88,16 +86,14 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Optional<Product> productOptional = productRepository.findById(productDto.getId());
-        if (productOptional.isEmpty()) {
+        if (productOptional.isEmpty()){
             return ResponseDto.<ProductDto>builder()
-                    .message("NOT_FOUND")
-                    .code(-1) //NOT_FOUND_ERROR_CODE
+                    .message(NOT_FOUND)
+                    .code(NOT_FOUND_ERROR_CODE)
                     .data(productDto)
                     .build();
         }
-
         Product product = productOptional.get();
-
         if (productDto.getName() != null) {
             product.setName(productDto.getName());
         }
@@ -113,18 +109,16 @@ public class ProductServiceImpl implements ProductService {
         }
 
         try {
-
             productRepository.save(product);
-
             return ResponseDto.<ProductDto>builder()
-                    .message("OK")
+                    .message(OK)
                     .data(productMapper.toDto(product))
                     .success(true)
                     .build();
-        } catch (Exception e) {
+        }catch (Exception e) {
             return ResponseDto.<ProductDto>builder()
                     .message("DATABASE_ERROR" + ": " + e.getMessage())
-                    .code(2) //DATABASE_ERROR_CODE
+                    .code(DATABASE_ERROR_CODE) //DATABASE_ERROR_CODE
                     .build();
         }
     }
@@ -157,7 +151,6 @@ public class ProductServiceImpl implements ProductService {
                 .success(true)
                 .build();
     }
-
     @Override
     public ResponseDto<ProductDto> getProductById(Integer id) {
         return productRepository.findById(id)
@@ -168,8 +161,8 @@ public class ProductServiceImpl implements ProductService {
                         .message("OK")
                         .build())
                 .orElse(ResponseDto.<ProductDto>builder()
-                        .message("NOT_FOUND")
-                        .code(-1) // NOT_FOUND_ERROR_CODE
+                        .message(NOT_FOUND)
+                        .code(NOT_FOUND_ERROR_CODE)
                         .build()
                 );
     }
@@ -180,8 +173,8 @@ public class ProductServiceImpl implements ProductService {
 
         if (products.isEmpty()){
             return ResponseDto.<Page<ProductDto>>builder()
-                    .code(-1) //NOT_FOUND_ERROR_CODE
-                    .message("NOT_FOUND")
+                    .code(NOT_FOUND_ERROR_CODE) //NOT_FOUND_ERROR_CODE
+                    .message(NOT_FOUND)
                     .build();
         }
 
