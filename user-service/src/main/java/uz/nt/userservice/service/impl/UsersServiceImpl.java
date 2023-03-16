@@ -38,14 +38,14 @@ public class UsersServiceImpl implements UsersService {
 
     @Transactional
     @Override
-    public ResponseDto<UsersDto> addUser(UsersDto dto) throws ConnectionException{
+    public ResponseDto<UsersDto> addUser(UsersDto dto){
+        String code = getCode();
         try {
             Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
 
             if (firstByEmail.isEmpty()) {
-                String code = getCode();
                 usersRepository.save(userMapper.toEntity(dto));
-                userVerificationRepository.save(new UserVerification(dto.getEmail(), code));
+                UserVerification save = userVerificationRepository.save(new UserVerification(dto.getEmail(), code));
                 if (emailClient.sendEmail(dto.getEmail(), code).isSuccess()) {
                     return ResponseDto.<UsersDto>builder()
                             .message("Verification code has just been sent")
@@ -71,9 +71,11 @@ public class UsersServiceImpl implements UsersService {
                     .build();
 
         } catch (ConnectionException e){
+            userVerificationRepository.delete(new UserVerification(dto.getEmail(), code));
             throw new ConnectionException(e.getField(), e.getMessage());
         } catch (RuntimeException e){
-            throw new ConnectionException("Database", "Error connecting with database");
+            userVerificationRepository.delete(new UserVerification(dto.getEmail(), code));
+            throw new ConnectionException("Database","Database error");
         }
     }
 
