@@ -2,6 +2,7 @@ package uz.nt.emailservice.schedule;
 
 import dto.ResponseDto;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -17,12 +18,11 @@ import java.util.List;
 @EnableScheduling
 @Configuration
 @EnableAsync
+@RequiredArgsConstructor
 public class ScheduleJob {
 
-    @Autowired
-    private UserClient userClient;
-    @Autowired
-    private EmailService emailService;
+    private final UserClient userClient;
+    private final EmailService emailService;
 
 
     @Transactional
@@ -34,7 +34,6 @@ public class ScheduleJob {
             throw new UserNotFoundException();
         }
         List<UsersDto> users = responseDto.getData();
-
         users.forEach(u -> emailService.sendEmailAboutSalesProduct(u.getEmail()));
 
     }

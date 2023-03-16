@@ -7,7 +7,7 @@ import uz.nt.emailservice.dto.SalesDto;
 
 import java.util.List;
 
-//@FeignClient
+@FeignClient(name = "sales-service")
 public interface SalesClient {
     @GetMapping("/sales")
     ResponseDto<List<SalesDto>> getSalesProductExp();

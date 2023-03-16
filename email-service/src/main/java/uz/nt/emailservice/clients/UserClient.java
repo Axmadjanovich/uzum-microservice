@@ -7,7 +7,7 @@ import uz.nt.emailservice.dto.UsersDto;
 
 import java.util.List;
 
-//@FeignClient(name = "user-service")
+@FeignClient(name = "user-service")
 public interface UserClient {
     @GetMapping
     ResponseDto<List<UsersDto>> getUsers();

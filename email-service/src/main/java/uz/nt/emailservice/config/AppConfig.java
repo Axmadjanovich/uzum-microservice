@@ -37,9 +37,8 @@ public class  AppConfig {
     }
     @Bean
     public String getVerifyHtml() throws IOException {
-        InputStream inputStream = new FileInputStream("D:\\NT\\uzum-microservice\\email-service\\htmls\\verifyCOde.html");
+        InputStream inputStream = getClass().getResourceAsStream("/htmls/verifyCode.html");
         String verifyCodeHtml = new String(inputStream.readAllBytes());
-//        return verifyCodeHtml;
-        return "linebreak";
+        return verifyCodeHtml;
     }
 }
