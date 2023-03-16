@@ -10,6 +10,7 @@ import uz.nt.productservice.models.Category;
 import uz.nt.productservice.repository.CategoryRepository;
 import uz.nt.productservice.service.CategoryService;
 import uz.nt.productservice.service.mapper.CategoryMapper;
+import validator.AppStatusMessages;
 
 import java.util.List;
 import java.util.Optional;
@@ -85,14 +86,14 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (categoryList.size() > 1) {
             return ResponseDto.<List<CategoryDto>>builder()
-                    .message("OK")
+                    .message(AppStatusMessages.OK)
                     .data(categoryList)
                     .success(true)
                     .build();
         }
         return ResponseDto.<List<CategoryDto>>builder()
-                .message("Categories are not found!")
-                .success(true)
+                .message(AppStatusMessages.NULL_VALUE)
+                .success(false)
                 .build();
     }
 
@@ -103,10 +104,10 @@ public class CategoryServiceImpl implements CategoryService {
                         .data(categoryMapper.toDto(category))
                         .success(true)
                         .code(0)
-                        .message("OK")
+                        .message(AppStatusMessages.OK)
                         .build())
                 .orElse(ResponseDto.<CategoryDto>builder()
-                        .message("NOT_FOUND")
+                        .message(AppStatusMessages.NOT_FOUND)
                         .code(-1)
                         .build()
                 );
@@ -120,7 +121,7 @@ public class CategoryServiceImpl implements CategoryService {
             Category category = categoryById.get();
             categoryRepository.deleteById(id);
             return ResponseDto.<CategoryDto>builder()
-                    .message("Category " + id + " has been deleted")
+                    .message(AppStatusMessages.OK)
                     .code(1)
                     .success(true)
                     .data(categoryMapper.toDto(category))

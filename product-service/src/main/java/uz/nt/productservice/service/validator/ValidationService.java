@@ -7,7 +7,8 @@ import uz.nt.productservice.dto.ProductDto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ValidationService {
+public class
+ValidationService {
 
     public static List<ErrorDto> validation(ProductDto dto){
         List<ErrorDto> errors = new ArrayList<>();

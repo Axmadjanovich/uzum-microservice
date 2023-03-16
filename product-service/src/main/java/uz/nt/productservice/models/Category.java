@@ -5,9 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Category {
     @Id
     @GeneratedValue(generator = "category_id_seq")
@@ -15,4 +17,9 @@ public class Category {
     private Integer id;
     private String name;
     private Integer parentId;
+
+    public Category(int id) {
+        this.id = id;
+    }
+
 }
