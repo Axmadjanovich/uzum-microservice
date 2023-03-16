@@ -36,7 +36,7 @@ public class ExceptionHandlerResource {
     public ResponseEntity<ResponseDto<ErrorDto>> connectionError(EmailServiceConnectionException e){
         return ResponseEntity.badRequest().body(
                 ResponseDto.<ErrorDto>builder()
-                        .data(new ErrorDto("Email service: ",e.getMessage()))
+                        .data(new ErrorDto("Email service",e.getMessage()))
                         .message(AppStatusMessages.UNEXPECTED_ERROR)
                         .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)
                         .build()
@@ -48,7 +48,7 @@ public class ExceptionHandlerResource {
     public ResponseEntity<ResponseDto<ErrorDto>> connectionError(DatabaseConnectionException e){
         return ResponseEntity.badRequest().body(
                 ResponseDto.<ErrorDto>builder()
-                        .data(new ErrorDto("Database: ",e.getMessage()))
+                        .data(new ErrorDto("Database",e.getMessage()))
                         .message(AppStatusMessages.DATABASE_ERROR)
                         .code(AppStatusCodes.DATABASE_ERROR_CODE)
                         .build()

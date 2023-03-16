@@ -21,6 +21,7 @@ import validator.AppStatusCodes;
 import validator.AppStatusMessages;
 
 import java.net.ConnectException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -55,7 +56,8 @@ public class UsersServiceImpl implements UsersService {
                             .build();
                 }
                 else
-                    throw new EmailServiceConnectionException("Failure in connecting with email service");
+                    throw new RuntimeException();
+//                    throw new EmailServiceConnectionException("Failure in connecting with email service");
             }
 
             if (firstByEmail.get().getEnabled()) {
@@ -133,6 +135,29 @@ public class UsersServiceImpl implements UsersService {
                     .code(1)
                     .message("Error while saving user: " + e.getMessage())
                     .build();
+        }
+    }
+
+    @Override
+    public ResponseDto<List<UsersDto>> getAllActiveUsers() throws DatabaseConnectionException {
+        try {
+            List<Users> users = usersRepository.findAllByEnabledTrue();
+            if (users.isEmpty()){
+                return ResponseDto.<List<UsersDto>>builder()
+                        .message(NOT_FOUND)
+                        .code(NOT_FOUND_ERROR_CODE)
+                        .build();
+            }
+
+            return ResponseDto.<List<UsersDto>>builder()
+                    .code(OK_CODE)
+                    .message(OK)
+                    .success(true)
+                    .data(users.stream().map(userMapper::toDto).toList())
+                    .build();
+        }
+        catch (Exception e){
+            throw new DatabaseConnectionException("Error connecting with the database.");
         }
     }
 

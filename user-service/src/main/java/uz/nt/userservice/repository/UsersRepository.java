@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import uz.nt.userservice.model.Users;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,6 +16,7 @@ import java.util.Optional;
 public interface UsersRepository extends JpaRepository<Users, Integer> {
     Optional<Users> findFirstByPhoneNumber(String phoneNumber);
     Optional<Users> findFirstByEmail(String email);
+    List<Users> findAllByEnabledTrue();
     @Modifying
     @Transactional
     @Query(value = "update users set enabled = true where email = :email", nativeQuery = true)

@@ -1,27 +1,30 @@
 package uz.nt.userservice.rest;
 
-import dto.ProductDto;
+//import dto.ProductDto;
 import dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+//import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
-import uz.nt.userservice.client.ProductClient;
+//import uz.nt.userservice.client.ProductClient;
 import uz.nt.userservice.dto.UsersDto;
+import uz.nt.userservice.exceptions.DatabaseConnectionException;
+import uz.nt.userservice.exceptions.EmailServiceConnectionException;
 import uz.nt.userservice.service.UsersService;
 
 import java.net.ConnectException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UsersResources {
     private final UsersService usersService;
-    private final ProductClient productClient;
+//    private final ProductClient productClient;
     //TODO AppMonsters: ValidationError uchun ExceptionHandler yozish
     @Operation(
             method = "Add new User",
@@ -31,7 +34,7 @@ public class UsersResources {
                     @ApiResponse(responseCode = "403", description = "Authorization error")}
     )
     @PostMapping()
-    public ResponseDto<UsersDto> addUser(@RequestBody @Valid UsersDto usersDto) throws ConnectException {
+    public ResponseDto<UsersDto> addUser(@RequestBody @Valid UsersDto usersDto) throws ConnectException, DatabaseConnectionException, EmailServiceConnectionException {
         return usersService.addUser(usersDto);
     }
 
@@ -45,23 +48,28 @@ public class UsersResources {
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
 
+    @GetMapping("all-users")
+    public ResponseDto<List<UsersDto>> getAllActiveUsers() throws DatabaseConnectionException {
+        return usersService.getAllActiveUsers();
+    }
+
     @GetMapping("/{id}")
     public ResponseDto<UsersDto> getUserById(@PathVariable Integer id){
         return usersService.getById(id);
     }
 
-    @GetMapping("/products")
-    public ResponseDto<Page<EntityModel<ProductDto>>> getProductList(){
-        return productClient.getProducts(10, 0);
-    }
+//    @GetMapping("/products")
+//    public ResponseDto<Page<EntityModel<ProductDto>>> getProductList(){
+//        return productClient.getProducts(10, 0);
+//    }
 
     @GetMapping("/verify")
-    public ResponseDto<Void> verify(@RequestParam String email, @RequestParam String code){
+    public ResponseDto<Void> verify(@RequestParam String email, @RequestParam String code) throws DatabaseConnectionException {
         return usersService.verify(email, code);
     }
 
     @GetMapping("/resend-code")
-    public ResponseDto<Void> resendCode(@RequestParam String email){
+    public ResponseDto<Void> resendCode(@RequestParam String email) throws DatabaseConnectionException {
         return usersService.resendCode(email);
     }
 
