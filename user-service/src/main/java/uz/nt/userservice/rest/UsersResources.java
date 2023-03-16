@@ -12,8 +12,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
 //import uz.nt.userservice.client.ProductClient;
 import uz.nt.userservice.dto.UsersDto;
-import uz.nt.userservice.exceptions.DatabaseConnectionException;
-import uz.nt.userservice.exceptions.EmailServiceConnectionException;
+import uz.nt.userservice.exceptions.ConnectionException;
 import uz.nt.userservice.service.UsersService;
 
 import java.net.ConnectException;
@@ -34,7 +33,7 @@ public class UsersResources {
                     @ApiResponse(responseCode = "403", description = "Authorization error")}
     )
     @PostMapping()
-    public ResponseDto<UsersDto> addUser(@RequestBody @Valid UsersDto usersDto) throws ConnectException, DatabaseConnectionException, EmailServiceConnectionException {
+    public ResponseDto<UsersDto> addUser(@RequestBody @Valid UsersDto usersDto) throws ConnectionException {
         return usersService.addUser(usersDto);
     }
 
@@ -49,7 +48,7 @@ public class UsersResources {
     }
 
     @GetMapping("all-users")
-    public ResponseDto<List<UsersDto>> getAllActiveUsers() throws DatabaseConnectionException {
+    public ResponseDto<List<UsersDto>> getAllActiveUsers() throws ConnectionException {
         return usersService.getAllActiveUsers();
     }
 
@@ -64,12 +63,12 @@ public class UsersResources {
 //    }
 
     @GetMapping("/verify")
-    public ResponseDto<Void> verify(@RequestParam String email, @RequestParam String code) throws DatabaseConnectionException {
+    public ResponseDto<Void> verify(@RequestParam String email, @RequestParam String code) throws ConnectionException {
         return usersService.verify(email, code);
     }
 
     @GetMapping("/resend-code")
-    public ResponseDto<Void> resendCode(@RequestParam String email) throws DatabaseConnectionException {
+    public ResponseDto<Void> resendCode(@RequestParam String email) throws ConnectionException {
         return usersService.resendCode(email);
     }
 

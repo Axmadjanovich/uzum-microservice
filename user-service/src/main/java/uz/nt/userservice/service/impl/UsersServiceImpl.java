@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.nt.userservice.client.EmailClient;
 import uz.nt.userservice.dto.UsersDto;
-import uz.nt.userservice.exceptions.DatabaseConnectionException;
-import uz.nt.userservice.exceptions.EmailServiceConnectionException;
+import uz.nt.userservice.exceptions.ConnectionException;
 import uz.nt.userservice.model.UserVerification;
 import uz.nt.userservice.model.Users;
 import uz.nt.userservice.repository.UserVerificationRepository;
@@ -39,7 +38,7 @@ public class UsersServiceImpl implements UsersService {
 
     @Transactional
     @Override
-    public ResponseDto<UsersDto> addUser(UsersDto dto) throws EmailServiceConnectionException, DatabaseConnectionException {
+    public ResponseDto<UsersDto> addUser(UsersDto dto) throws ConnectionException{
         try {
             Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
 
@@ -56,8 +55,7 @@ public class UsersServiceImpl implements UsersService {
                             .build();
                 }
                 else
-                    throw new RuntimeException();
-//                    throw new EmailServiceConnectionException("Failure in connecting with email service");
+                    throw new ConnectionException("Email service", "Failure in connecting with email service");
             }
 
             if (firstByEmail.get().getEnabled()) {
@@ -72,9 +70,10 @@ public class UsersServiceImpl implements UsersService {
                     .message("You have already received the email")
                     .build();
 
-        }
-        catch (RuntimeException e){
-            throw new DatabaseConnectionException("Unexpected error connecting with the database");
+        } catch (ConnectionException e){
+            throw new ConnectionException(e.getField(), e.getMessage());
+        } catch (RuntimeException e){
+            throw new ConnectionException("Database", "bala");
         }
     }
 
@@ -139,7 +138,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public ResponseDto<List<UsersDto>> getAllActiveUsers() throws DatabaseConnectionException {
+    public ResponseDto<List<UsersDto>> getAllActiveUsers() throws ConnectionException {
         try {
             List<Users> users = usersRepository.findAllByEnabledTrue();
             if (users.isEmpty()){
@@ -156,8 +155,8 @@ public class UsersServiceImpl implements UsersService {
                     .data(users.stream().map(userMapper::toDto).toList())
                     .build();
         }
-        catch (Exception e){
-            throw new DatabaseConnectionException("Error connecting with the database.");
+        catch (RuntimeException e){
+            throw new ConnectionException("Database", "Error connecting with the database.");
         }
     }
 
@@ -179,6 +178,7 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public ResponseDto<UsersDto> getById(Integer id) {
+
         return usersRepository.findById(id)
                 .map(u -> ResponseDto.<UsersDto>builder()
                         .success(true)
@@ -193,7 +193,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public ResponseDto<Void> verify(String email, String code) throws DatabaseConnectionException {
+    public ResponseDto<Void> verify(String email, String code) throws ConnectionException {
         try {
 
             Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
@@ -224,24 +224,24 @@ public class UsersServiceImpl implements UsersService {
                         .build();
             }
 
-//            if (usersRepository.setUserEnabled(email) == 0) {
-//                return ResponseDto.<Void>builder()
-//                        .code(DATABASE_ERROR_CODE)
-//                        .message(DATABASE_ERROR)
-//                        .build();
-//            }
+            if (usersRepository.setUserEnabled(email) == 0) {
+                return ResponseDto.<Void>builder()
+                        .code(DATABASE_ERROR_CODE)
+                        .message(DATABASE_ERROR)
+                        .build();
+            }
             usersRepository.setUserEnabled(email);
             userVerificationRepository.delete(new UserVerification(email, code));
             return ResponseDto.<Void>builder()
                     .code(OK_CODE)
                     .message("Successfully verified")
                     .build();
-        } catch (Exception e) {
-            throw new DatabaseConnectionException("Error connecting with the database");
+        } catch (RuntimeException e) {
+            throw new ConnectionException("Database","Error connecting with the database");
         }
 
     }
-    public ResponseDto<Void> resendCode(String email) throws DatabaseConnectionException {
+    public ResponseDto<Void> resendCode(String email) throws ConnectionException {
         try {
             String code = getCode();
             Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
@@ -274,15 +274,18 @@ public class UsersServiceImpl implements UsersService {
                             .build();
                 }
                 else
-                    throw new EmailServiceConnectionException("Error while connecting with the email service");
+                    throw new ConnectionException("Email","Error while connecting with the email service");
             }
             return ResponseDto.<Void>builder()
                     .code(UNEXPECTED_ERROR_CODE)
                     .message("Could not resend the verification email")
                     .build();
         }
-        catch (Exception e){
-            throw new DatabaseConnectionException("Error connecting with the database");
+        catch (ConnectionException e){
+            throw new ConnectionException(e.getField(), e.getMessage());
+        }
+        catch (RuntimeException e){
+            throw new ConnectionException("Database","Error connecting with the database");
         }
     }
 
