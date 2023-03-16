@@ -1,6 +1,7 @@
 package uz.nt.emailservice.service;
 
 import dto.ResponseDto;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,6 +13,7 @@ import uz.nt.emailservice.clients.SalesClient;
 import uz.nt.emailservice.dto.ProductDto;
 import uz.nt.emailservice.dto.SalesDto;
 
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -32,7 +34,7 @@ public class EmailService {
 
             String url = "http://localhost:9006/user/verify?email=" + toEmail + "&code=" + code;
 
-            String htmlMessage = htmlCode.replaceFirst("//url//", url);
+            String htmlMessage = htmlCode.replace("//url//", url);
 
             helper.setText(htmlMessage, true);
 
@@ -45,7 +47,6 @@ public class EmailService {
                     .data(true)
                     .build();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return ResponseDto.<Boolean>builder()
                     .message("Error: " + e.getMessage())
                     .code(-2)
@@ -90,8 +91,10 @@ public class EmailService {
                 row.append("</td>\n <td>");
                 row.append(product.getPrice());
                 row.append("</td> \n <td><img src='data:image/png;base64,");
-                row.append(fileClient.getFileBytes(product.getFileId(), "SMALL"));
-                row.append("></img></td>\n </tr>");
+                byte[] bytes = fileClient.getFileBytes(product.getFileId(), "SMALL").getData();
+                String img = Base64.getEncoder().encodeToString(bytes);
+                row.append(img);
+                row.append("'></img></td>\n </tr>");
                 row=new StringBuilder();
                 htmlBody.append(row);
             }
@@ -99,7 +102,7 @@ public class EmailService {
             htmlBody.append("</body>");
             htmlBody.append("</html>");
             helper.setText(htmlBody.toString(), true);
-            helper.setSubject("Jegirmaning ohirgi kuni");
+            helper.setSubject("Chegirmaning ohirgi kuni");
 
 
             mailSender.send(sendMessage);
@@ -111,7 +114,7 @@ public class EmailService {
                     .data(true)
                     .build();
 
-        } catch (Exception e) {
+        } catch (MessagingException e) {
             return ResponseDto.<Boolean>builder()
                     .message("Error: " + e.getMessage())
                     .code(-2)
