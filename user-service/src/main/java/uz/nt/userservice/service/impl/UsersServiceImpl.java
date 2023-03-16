@@ -45,7 +45,7 @@ public class UsersServiceImpl implements UsersService {
 
             if (firstByEmail.isEmpty()) {
                 usersRepository.save(userMapper.toEntity(dto));
-                UserVerification save = userVerificationRepository.save(new UserVerification(dto.getEmail(), code));
+                userVerificationRepository.save(new UserVerification(dto.getEmail(), code));
                 if (emailClient.sendEmail(dto.getEmail(), code).isSuccess()) {
                     return ResponseDto.<UsersDto>builder()
                             .message("Verification code has just been sent")

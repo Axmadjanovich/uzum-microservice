@@ -42,12 +42,12 @@ public class UsersResources {
         return usersService.updateUser(usersDto);
     }
 
-    @GetMapping("by-phone-number")
+    @GetMapping("/by-phone-number")
     public ResponseDto<EntityModel<UsersDto>> getUserByPhoneNumber(@RequestParam String phoneNumber){
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
 
-    @GetMapping("all-users")
+    @GetMapping("/all-users")
     public ResponseDto<List<UsersDto>> getAllActiveUsers() throws ConnectionException {
         return usersService.getAllActiveUsers();
     }
