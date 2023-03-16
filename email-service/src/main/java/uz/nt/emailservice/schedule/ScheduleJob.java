@@ -26,7 +26,7 @@ public class ScheduleJob {
 
 
     @Transactional
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(cron = "0 2 0 * * *")
     public void sendEmailSales() throws UserNotFoundException {
         ResponseDto<List<UsersDto>> responseDto = userClient.getUsers();
 
@@ -34,7 +34,7 @@ public class ScheduleJob {
             throw new UserNotFoundException();
         }
         List<UsersDto> users = responseDto.getData();
-        users.forEach(u -> emailService.sendEmailAboutSalesProduct(u.getEmail()));
+        users.forEach(u -> emailService.sendEmailAboutSalesProduct("yusupofavabek@gmail.com"));
 
     }
 }
