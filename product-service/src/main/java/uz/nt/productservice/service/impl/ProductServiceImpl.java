@@ -37,7 +37,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-    private final ProductRepositoryImpl productRepositoryImpl;
+        private final ProductRepositoryImpl productRepositoryImpl;
 
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
