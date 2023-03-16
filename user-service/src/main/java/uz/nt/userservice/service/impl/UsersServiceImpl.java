@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.nt.userservice.client.EmailClient;
 import uz.nt.userservice.dto.UsersDto;
+import uz.nt.userservice.exceptions.DatabaseConnectionException;
+import uz.nt.userservice.exceptions.EmailServiceConnectionException;
 import uz.nt.userservice.model.UserVerification;
 import uz.nt.userservice.model.Users;
 import uz.nt.userservice.repository.UserVerificationRepository;
@@ -36,9 +38,8 @@ public class UsersServiceImpl implements UsersService {
 
     @Transactional
     @Override
-    public ResponseDto<UsersDto> addUser(UsersDto dto) {
+    public ResponseDto<UsersDto> addUser(UsersDto dto) throws EmailServiceConnectionException, DatabaseConnectionException {
         try {
-
             Optional<Users> firstByEmail = usersRepository.findFirstByEmail(dto.getEmail());
 
             if (firstByEmail.isEmpty()) {
@@ -52,26 +53,26 @@ public class UsersServiceImpl implements UsersService {
                             .code(OK_CODE)
                             .success(true)
                             .build();
-                } else {
-                    throw new RuntimeException("Failure in connecting with email service");
                 }
-
+                else
+                    throw new EmailServiceConnectionException("Failure in connecting with email service");
             }
-            else {
-                if (firstByEmail.get().getEnabled()) {
+
+            if (firstByEmail.get().getEnabled()) {
                     return ResponseDto.<UsersDto>builder()
                             .code(UNEXPECTED_ERROR_CODE)
                             .message("User has already been registered")
                             .build();
-                }
             }
+
             return ResponseDto.<UsersDto>builder()
                     .code(UNEXPECTED_ERROR_CODE)
-                    .message("Verify your email address with the following link")
+                    .message("You have already received the email")
                     .build();
 
-        }catch (RuntimeException e){
-            throw new RuntimeException(e.getMessage());
+        }
+        catch (RuntimeException e){
+            throw new DatabaseConnectionException("Unexpected error connecting with the database");
         }
     }
 
@@ -167,82 +168,97 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public ResponseDto<Void> verify(String email, String code) {
-        Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
-        Optional<Users> userFromPSQL = usersRepository.findFirstByEmail(email);
+    public ResponseDto<Void> verify(String email, String code) throws DatabaseConnectionException {
+        try {
 
-        if (userFromPSQL.isEmpty() && userFromRedis.isEmpty()) {
-            return ResponseDto.<Void>builder()
-                    .code(NOT_FOUND_ERROR_CODE)
-                    .message(NOT_FOUND)
-                    .build();
-        }
+            Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
+            Optional<Users> userFromPSQL = usersRepository.findFirstByEmail(email);
 
-        if (userFromPSQL.isPresent() && userFromPSQL.get().getEnabled()) {
-            return ResponseDto.<Void>builder()
-                    .code(UNEXPECTED_ERROR_CODE)
-                    .message(DUPLICATE_ERROR)
-                    .build();
-        }
-
-        if (userFromRedis.isEmpty() && !userFromPSQL.get().getEnabled()) {
-            return resendCode(email);
-        }
-
-        if (!userFromRedis.get().getCode().equals(code)) {
-            return ResponseDto.<Void>builder()
-                    .code(VALIDATION_ERROR_CODE)
-                    .message("Provided code is not valid!")
-                    .build();
-        }
-
-        if (usersRepository.setUserTrueByEmail(email) == 0) {
-            return ResponseDto.<Void>builder()
-                    .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR)
-                    .build();
-        }
-        userVerificationRepository.delete(new UserVerification(email, code));
-        return ResponseDto.<Void>builder()
-                .code(OK_CODE)
-                .message("Successfully verified")
-                .build();
-
-    }
-    public ResponseDto<Void> resendCode(String email) {
-        String code = getCode();
-        Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
-        Optional<Users> userFromPSQL = usersRepository.findFirstByEmail(email);
-
-        // umuman register qimagan
-        if (userFromPSQL.isEmpty() && userFromRedis.isEmpty()) {
-            return ResponseDto.<Void>builder()
-                    .code(NOT_FOUND_ERROR_CODE)
-                    .message(NOT_FOUND)
-                    .build();
-        }
-        // Databaseda bor va true
-        if (userFromPSQL.isPresent() && userFromPSQL.get().getEnabled()) {
-            return ResponseDto.<Void>builder()
-                    .code(UNEXPECTED_ERROR_CODE)
-                    .message(DUPLICATE_ERROR)
-                    .build();
-        }
-
-        // Databaseda bor va enabled false lekin redisda yo'q
-        if (userFromPSQL.isPresent() && userFromPSQL.get().getEnabled() == false && userFromRedis.isEmpty()) {
-            if (emailClient.sendEmail(email, code).isSuccess()) {
-                userVerificationRepository.save(new UserVerification(email, code));
+            if (userFromPSQL.isEmpty() && userFromRedis.isEmpty()) {
                 return ResponseDto.<Void>builder()
-                        .message("Email verification has just been resent")
-                        .code(OK_CODE)
+                        .code(NOT_FOUND_ERROR_CODE)
+                        .message(NOT_FOUND)
                         .build();
             }
+
+            if (userFromPSQL.isPresent() && userFromPSQL.get().getEnabled()) {
+                return ResponseDto.<Void>builder()
+                        .code(UNEXPECTED_ERROR_CODE)
+                        .message(DUPLICATE_ERROR)
+                        .build();
+            }
+
+            if (userFromRedis.isEmpty() && !userFromPSQL.get().getEnabled()) {
+                return resendCode(email);
+            }
+
+            if (!userFromRedis.get().getCode().equals(code)) {
+                return ResponseDto.<Void>builder()
+                        .code(VALIDATION_ERROR_CODE)
+                        .message("Provided code is not valid!")
+                        .build();
+            }
+
+//            if (usersRepository.setUserEnabled(email) == 0) {
+//                return ResponseDto.<Void>builder()
+//                        .code(DATABASE_ERROR_CODE)
+//                        .message(DATABASE_ERROR)
+//                        .build();
+//            }
+            usersRepository.setUserEnabled(email);
+            userVerificationRepository.delete(new UserVerification(email, code));
+            return ResponseDto.<Void>builder()
+                    .code(OK_CODE)
+                    .message("Successfully verified")
+                    .build();
+        } catch (Exception e) {
+            throw new DatabaseConnectionException("Error connecting with the database");
         }
-        return ResponseDto.<Void>builder()
-                .code(UNEXPECTED_ERROR_CODE)
-                .message("Could not resend the verification email")
-                .build();
+
+    }
+    public ResponseDto<Void> resendCode(String email) throws DatabaseConnectionException {
+        try {
+            String code = getCode();
+            Optional<UserVerification> userFromRedis = userVerificationRepository.findById(email);
+            Optional<Users> userFromPSQL = usersRepository.findFirstByEmail(email);
+
+            // umuman register qimagan
+            if (userFromPSQL.isEmpty() && userFromRedis.isEmpty()) {
+                return ResponseDto.<Void>builder()
+                        .code(NOT_FOUND_ERROR_CODE)
+                        .message(NOT_FOUND)
+                        .build();
+            }
+
+            // Databaseda bor va true
+            if (userFromPSQL.isPresent() && userFromPSQL.get().getEnabled()) {
+                return ResponseDto.<Void>builder()
+                        .code(UNEXPECTED_ERROR_CODE)
+                        .message(DUPLICATE_ERROR)
+                        .build();
+            }
+
+            // Databaseda bor va enabled false lekin redisda yo'q
+            if (userFromPSQL.isPresent() && !userFromPSQL.get().getEnabled() && userFromRedis.isEmpty()) {
+                if (emailClient.sendEmail(email, code).isSuccess()) {
+                    userVerificationRepository.save(new UserVerification(email, code));
+                    return ResponseDto.<Void>builder()
+                            .message("Email verification has just been resent")
+                            .code(OK_CODE)
+                            .success(true)
+                            .build();
+                }
+                else
+                    throw new EmailServiceConnectionException("Error while connecting with the email service");
+            }
+            return ResponseDto.<Void>builder()
+                    .code(UNEXPECTED_ERROR_CODE)
+                    .message("Could not resend the verification email")
+                    .build();
+        }
+        catch (Exception e){
+            throw new DatabaseConnectionException("Error connecting with the database");
+        }
     }
 
     public String getCode() {

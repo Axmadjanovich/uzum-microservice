@@ -8,10 +8,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import uz.nt.userservice.exceptions.DatabaseConnectionException;
+import uz.nt.userservice.exceptions.EmailServiceConnectionException;
 import validator.AppStatusCodes;
 import validator.AppStatusMessages;
 
-import java.net.ConnectException;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -31,14 +32,28 @@ public class ExceptionHandlerResource {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ResponseDto<ErrorDto>> handlerInvalidArgument(RuntimeException e){
+    @ExceptionHandler(EmailServiceConnectionException.class)
+    public ResponseEntity<ResponseDto<ErrorDto>> connectionError(EmailServiceConnectionException e){
         return ResponseEntity.badRequest().body(
                 ResponseDto.<ErrorDto>builder()
-                        .data(new ErrorDto("Database",e.getMessage()))
+                        .data(new ErrorDto("Email service: ",e.getMessage()))
+                        .message(AppStatusMessages.UNEXPECTED_ERROR)
+                        .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)
+                        .build()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DatabaseConnectionException.class)
+    public ResponseEntity<ResponseDto<ErrorDto>> connectionError(DatabaseConnectionException e){
+        return ResponseEntity.badRequest().body(
+                ResponseDto.<ErrorDto>builder()
+                        .data(new ErrorDto("Database: ",e.getMessage()))
                         .message(AppStatusMessages.DATABASE_ERROR)
                         .code(AppStatusCodes.DATABASE_ERROR_CODE)
                         .build()
         );
     }
+
+
 }
