@@ -73,7 +73,7 @@ public class UsersServiceImpl implements UsersService {
         } catch (ConnectionException e){
             throw new ConnectionException(e.getField(), e.getMessage());
         } catch (RuntimeException e){
-            throw new ConnectionException("Database", "bala");
+            throw new ConnectionException("Database", "Error connecting with database");
         }
     }
 
