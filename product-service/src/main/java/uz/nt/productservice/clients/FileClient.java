@@ -11,7 +11,7 @@ import java.util.List;
 
 //@FeignClient(name = "file-service",
 //        url = "http://localhost:8001/file-service", configuration = FeignClientConfig.class)
-@FeignClient(name = "file-service")
+@FeignClient(name = "file-service", fallback = FallbackService.class)
 public interface FileClient {
 
     @PostMapping(value = "file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
